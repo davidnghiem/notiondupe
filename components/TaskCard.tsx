@@ -100,6 +100,11 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
             {new Date(task.dueDate).toLocaleDateString()}
           </span>
         )}
+        {task.createdAt && (
+          <span className="text-[11px] text-n-text-dim ml-auto" title="Created">
+            {new Date(task.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+          </span>
+        )}
       </div>
     </div>
   );

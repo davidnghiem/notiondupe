@@ -17,7 +17,8 @@ import { Column } from './Column';
 import { TaskCard } from './TaskCard';
 import { AddTaskModal } from './AddTaskModal';
 import { Column as ColumnType, Task } from '@/lib/schema';
-import { PRIORITIES, PRIORITY_LABELS, TEAM_MEMBERS } from '@/lib/constants';
+import { PRIORITIES, PRIORITY_LABELS, PRIORITY_COLORS, TEAM_MEMBERS } from '@/lib/constants';
+import { FilterBar } from './MultiSelectFilter';
 
 type BoardColumn = ColumnType & { tasks: Task[] };
 
@@ -34,8 +35,7 @@ export function Board() {
   const [selectedColumnId, setSelectedColumnId] = useState<number>(1);
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [filterAssignee, setFilterAssignee] = useState<string>('');
-  const [filterPriority, setFilterPriority] = useState<string>('');
+  const [filters, setFilters] = useState<Record<string, string[]>>({});
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -292,7 +292,20 @@ export function Board() {
     );
   }
 
-  const hasFilters = filterAssignee !== '' || filterPriority !== '';
+  const kanbanFilters = [
+    {
+      key: 'assignee',
+      label: 'Assignee',
+      options: TEAM_MEMBERS.map((m) => ({ value: m, label: m })),
+    },
+    {
+      key: 'priority',
+      label: 'Priority',
+      options: PRIORITIES.map((p) => ({ value: p, label: `${p} — ${PRIORITY_LABELS[p]}`, color: PRIORITY_COLORS[p] })),
+    },
+  ];
+
+  const hasFilters = Object.values(filters).some((v) => v.length > 0);
 
   const filteredBoardData = hasFilters && boardData
     ? {
@@ -300,49 +313,34 @@ export function Board() {
         columns: boardData.columns.map((col) => ({
           ...col,
           tasks: col.tasks.filter((task) => {
-            if (filterAssignee && task.assignee !== filterAssignee) return false;
-            if (filterPriority && task.priority !== filterPriority) return false;
+            if (filters.assignee?.length && !filters.assignee.includes(task.assignee || '')) return false;
+            if (filters.priority?.length && !filters.priority.includes(task.priority || '')) return false;
             return true;
           }),
         })),
       }
     : boardData;
 
-  const selectCls = "px-2 py-1.5 text-sm border-none rounded bg-n-elevated text-n-text outline-none focus:ring-1 focus:ring-n-accent";
+  const handleFilterChange = (key: string, selected: string[]) => {
+    setFilters((prev) => {
+      const next = { ...prev };
+      if (selected.length === 0) {
+        delete next[key];
+      } else {
+        next[key] = selected;
+      }
+      return next;
+    });
+  };
 
   return (
     <>
-      <div className="flex items-center gap-2 mb-4 flex-wrap">
-        <select
-          value={filterAssignee}
-          onChange={(e) => setFilterAssignee(e.target.value)}
-          className={selectCls}
-          title="Filter by assignee"
-        >
-          <option value="">All members</option>
-          {TEAM_MEMBERS.map((m) => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
-        <select
-          value={filterPriority}
-          onChange={(e) => setFilterPriority(e.target.value)}
-          className={selectCls}
-          title="Filter by priority"
-        >
-          <option value="">All priorities</option>
-          {PRIORITIES.map((p) => (
-            <option key={p} value={p}>{p} — {PRIORITY_LABELS[p]}</option>
-          ))}
-        </select>
-        {hasFilters && (
-          <button
-            onClick={() => { setFilterAssignee(''); setFilterPriority(''); }}
-            className="px-2 py-1.5 text-xs text-n-text-dim hover:text-n-text-secondary"
-          >
-            Clear filters
-          </button>
-        )}
+      <div className="mb-4">
+        <FilterBar
+          availableFilters={kanbanFilters}
+          activeFilters={filters}
+          onChange={handleFilterChange}
+        />
       </div>
 
       <DndContext
