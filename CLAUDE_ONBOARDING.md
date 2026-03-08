@@ -34,7 +34,15 @@ curl -X POST https://notiondupe.vercel.app/api/issues \
   -d '{"title":"Bug description here", "priority":"P1", "component":"Orders", "reporter":"YOUR_NAME"}'
 ```
 
-### 3. When you fix something — update the issue AND log the activity
+### 3. When you start working on something — move the kanban task to In Progress
+
+```bash
+curl -X PATCH https://notiondupe.vercel.app/api/tasks/ID \
+  -H "Content-Type: application/json" \
+  -d '{"columnId":2}'
+```
+
+### 4. When you fix something — update the issue, tag the task, AND log the activity
 
 ```bash
 # Mark issue as fixed
@@ -42,13 +50,18 @@ curl -X PATCH https://notiondupe.vercel.app/api/issues/ID \
   -H "Content-Type: application/json" \
   -d '{"status":"fixed", "assignee":"YOUR_NAME"}'
 
+# Tag the kanban task as awaiting-merge (keep it In Progress, NOT Done yet)
+curl -X PATCH https://notiondupe.vercel.app/api/tasks/ID \
+  -H "Content-Type: application/json" \
+  -d '{"labels":["awaiting-merge"]}'
+
 # Log what you did (this is permanent — no edits, no deletes)
 curl -X POST https://notiondupe.vercel.app/api/activities \
   -H "Content-Type: application/json" \
   -d '{"actor":"YOUR_NAME", "action":"Fixed issue #ID: description of what was done"}'
 ```
 
-### 4. When you complete a kanban task — move it to Done
+### 5. When a PR is merged — THEN move the task to Done
 
 ```bash
 curl -X PATCH https://notiondupe.vercel.app/api/tasks/ID \
@@ -56,9 +69,16 @@ curl -X PATCH https://notiondupe.vercel.app/api/tasks/ID \
   -d '{"columnId":3}'
 ```
 
-Column IDs: `1` = To Do, `2` = In Progress, `3` = Done
+**A task is NOT done until its PR is merged.** The lifecycle is:
 
-### 5. Before making architectural decisions — check existing decisions
+| Stage | Column | Label |
+|-------|--------|-------|
+| Not started | To Do (`columnId: 1`) | — |
+| Actively working | In Progress (`columnId: 2`) | — |
+| PR created, waiting for review | In Progress (`columnId: 2`) | `awaiting-merge` |
+| PR merged | Done (`columnId: 3`) | — |
+
+### 6. Before making architectural decisions — check existing decisions
 
 ```bash
 curl "https://notiondupe.vercel.app/api/decisions?category=Orders"
