@@ -40,4 +40,4 @@ export const DECISION_STATUS_LABELS: Record<string, string> = {
 
 export const DECISION_CATEGORIES = ['Architecture', 'Design', 'Security', 'Orders', 'Email', 'Calendar', 'Dashboard', 'Contacts', 'Portal', 'Infrastructure'] as const;
 
-export const TEAM_MEMBERS = ["Kyle", "Nghiem", "Kyle's Claude", "Nghiem's Claude"] as const;
+export const TEAM_MEMBERS = ["Kyle", "Nghiem", "Kyle's Claude", "Nghiem's Claude", "Team"] as const;

@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { activities } from '@/lib/schema';
 import { desc, eq, and, type SQL } from 'drizzle-orm';
+import { TEAM_MEMBERS } from '@/lib/constants';
+
+// Normalize actor names: fix missing apostrophes, match to canonical TEAM_MEMBERS
+function normalizeActor(actor: string): string {
+  // Exact match first
+  if ((TEAM_MEMBERS as readonly string[]).includes(actor)) return actor;
+  // Normalize by stripping apostrophes and comparing
+  const stripped = actor.replace(/['']/g, '').toLowerCase();
+  for (const member of TEAM_MEMBERS) {
+    if (member.replace(/['']/g, '').toLowerCase() === stripped) return member;
+  }
+  return actor;
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -48,7 +61,7 @@ export async function POST(request: NextRequest) {
     const newActivity = await db
       .insert(activities)
       .values({
-        actor: body.actor,
+        actor: normalizeActor(body.actor),
         action: body.action,
         context: body.context ? (typeof body.context === 'string' ? body.context : JSON.stringify(body.context)) : null,
         metadata: body.metadata ? (typeof body.metadata === 'string' ? body.metadata : JSON.stringify(body.metadata)) : null,
