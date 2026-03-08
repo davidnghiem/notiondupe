@@ -1,11 +1,100 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { boards, columns, issues, roadmapItems, decisions } from '@/lib/schema';
+import { sql } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST() {
   try {
+    // 0. Create tables if they don't exist (fresh deployment)
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS boards (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT now(),
+        updated_at TIMESTAMP DEFAULT now()
+      )`);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS columns (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        position INTEGER NOT NULL,
+        board_id INTEGER NOT NULL DEFAULT 1 REFERENCES boards(id),
+        created_at TIMESTAMP DEFAULT now()
+      )`);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS tasks (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        column_id INTEGER REFERENCES columns(id),
+        position INTEGER NOT NULL DEFAULT 0,
+        notes TEXT,
+        priority VARCHAR(2),
+        labels TEXT,
+        assignee VARCHAR(100),
+        due_date TIMESTAMP,
+        board_id INTEGER NOT NULL DEFAULT 1 REFERENCES boards(id),
+        created_at TIMESTAMP DEFAULT now(),
+        updated_at TIMESTAMP DEFAULT now()
+      )`);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS issues (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        priority VARCHAR(2) NOT NULL DEFAULT 'P2',
+        status VARCHAR(20) NOT NULL DEFAULT 'backlog',
+        component VARCHAR(100),
+        assignee VARCHAR(100),
+        reporter VARCHAR(100),
+        version_found VARCHAR(20),
+        version_fixed VARCHAR(20),
+        steps_to_reproduce TEXT,
+        attachments TEXT,
+        custom_fields TEXT,
+        created_at TIMESTAMP DEFAULT now(),
+        updated_at TIMESTAMP DEFAULT now()
+      )`);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS roadmap_items (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        phase VARCHAR(20) NOT NULL DEFAULT 'backlog',
+        status VARCHAR(20) NOT NULL DEFAULT 'backlog',
+        assignees TEXT,
+        start_date TIMESTAMP,
+        target_date TIMESTAMP,
+        dependencies TEXT,
+        sort_order INTEGER DEFAULT 0,
+        attachments TEXT,
+        created_at TIMESTAMP DEFAULT now(),
+        updated_at TIMESTAMP DEFAULT now()
+      )`);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS activities (
+        id SERIAL PRIMARY KEY,
+        actor VARCHAR(100) NOT NULL,
+        action TEXT NOT NULL,
+        context TEXT,
+        metadata TEXT,
+        created_at TIMESTAMP DEFAULT now()
+      )`);
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS decisions (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        description TEXT NOT NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'settled',
+        category VARCHAR(50),
+        superseded_by INTEGER,
+        created_at TIMESTAMP DEFAULT now(),
+        updated_at TIMESTAMP DEFAULT now()
+      )`);
+
     // 1. Ensure default board exists
     const existingBoards = await db.select().from(boards);
     if (existingBoards.length === 0) {
