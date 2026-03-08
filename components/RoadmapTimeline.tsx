@@ -46,9 +46,13 @@ export function RoadmapTimeline() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const fetchItems = useCallback(async () => {
-    const res = await fetch('/api/roadmap');
-    const data = await res.json();
-    setItems(data);
+    try {
+      const res = await fetch('/api/roadmap');
+      const data = await res.json();
+      setItems(Array.isArray(data) ? data : []);
+    } catch {
+      setItems([]);
+    }
     setLoading(false);
   }, []);
 
