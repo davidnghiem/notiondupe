@@ -12,8 +12,8 @@ Project management tool for the MWAH CRM team. Used by both humans and AI agents
 | Tab | Purpose |
 |-----|---------|
 | **Kanban** | Drag-and-drop task board with columns (Backlog, To Do, In Progress, In Review, Done, Blocked) |
-| **Issues** | Bug/issue tracker with filterable table, inline editing, custom fields, file attachments |
-| **Roadmap** | Timeline view grouped by phase (Immediate, Short-term, Medium-term, Long-term) |
+| **Issues** | Bug/issue tracker with filterable table, sortable columns, inline editing, custom fields, file attachments |
+| **Roadmap** | High-level feature/project timeline grouped by phase (Immediate, Short-term, Medium-term, Long-term) |
 | **Activity** | Append-only activity feed — immutable audit log of what everyone did |
 | **Decisions** | Architectural decision log with statuses (Settled, Open, Superseded) |
 
@@ -57,7 +57,11 @@ All endpoints return JSON. Base URL is your deployment root (e.g. `https://your-
 
 **Components:** Orders, Email, Calendar, Dashboard, Store Detail, Contact Detail, Admin, Map, Activity, Auth, Cloud Functions, Other
 
+**Sorting:** Click any column header (Priority, Title, Status, Component, Assignee) to sort. Click again to reverse. Click a third time to clear. Priority sorts by severity (P0→P3), Status sorts by workflow order.
+
 ### Roadmap
+
+**Important:** The Roadmap is for **high-level projects and features only** — things like "Store Portal v1", "Analytics Dashboards", "CSV Reconciliation". Do NOT put small tasks, bug fixes, or infrastructure work here. Those belong in **Issues** (for bugs/problems) or **Kanban** (for task tracking). If it takes less than a week or isn't a distinct product feature, it's not a roadmap item.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|

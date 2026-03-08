@@ -1,11 +1,19 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Issue } from '@/lib/schema';
 import { PriorityBadge } from './PriorityBadge';
 import { StatusBadge } from './StatusBadge';
 import { IssueDetail } from './IssueDetail';
 import { PRIORITIES, ISSUE_STATUSES, ISSUE_STATUS_LABELS, COMPONENTS, TEAM_MEMBERS } from '@/lib/constants';
+
+type SortKey = 'priority' | 'title' | 'status' | 'component' | 'assignee' | null;
+type SortDir = 'asc' | 'desc';
+
+const PRIORITY_ORDER: Record<string, number> = { P0: 0, P1: 1, P2: 2, P3: 3 };
+const STATUS_ORDER: Record<string, number> = Object.fromEntries(
+  (ISSUE_STATUSES as readonly string[]).map((s, i) => [s, i])
+);
 
 const selectCls = "px-2 py-1.5 text-sm border-none rounded bg-n-elevated text-n-text outline-none focus:ring-1 focus:ring-n-accent placeholder:text-n-text-dim";
 const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded bg-n-elevated text-n-text focus:ring-1 focus:ring-n-accent outline-none placeholder:text-n-text-dim text-sm";
@@ -16,6 +24,43 @@ export function IssueList() {
   const [filters, setFilters] = useState({ priority: '', status: '', component: '', assignee: '', search: '' });
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [sortKey, setSortKey] = useState<SortKey>(null);
+  const [sortDir, setSortDir] = useState<SortDir>('asc');
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      if (sortDir === 'asc') setSortDir('desc');
+      else { setSortKey(null); setSortDir('asc'); }
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  };
+
+  const sortedIssues = useMemo(() => {
+    if (!sortKey) return issues;
+    return [...issues].sort((a, b) => {
+      let cmp = 0;
+      switch (sortKey) {
+        case 'priority':
+          cmp = (PRIORITY_ORDER[a.priority] ?? 99) - (PRIORITY_ORDER[b.priority] ?? 99);
+          break;
+        case 'status':
+          cmp = (STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status] ?? 99);
+          break;
+        case 'title':
+          cmp = (a.title || '').localeCompare(b.title || '');
+          break;
+        case 'component':
+          cmp = (a.component || '').localeCompare(b.component || '');
+          break;
+        case 'assignee':
+          cmp = (a.assignee || '').localeCompare(b.assignee || '');
+          break;
+      }
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+  }, [issues, sortKey, sortDir]);
 
   const fetchIssues = useCallback(async () => {
     const params = new URLSearchParams();
@@ -96,16 +141,33 @@ export function IssueList() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-n-border-strong text-left">
-                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs" title="P0=Critical, P1=High, P2=Medium, P3=Low">Priority</th>
-                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Title</th>
-                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs" title="backlog, triaged, in_progress, fixed, closed, wont_fix">Status</th>
-                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs" title="Module/area of the codebase">Component</th>
-                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs" title="Team member or Claude agent">Assignee</th>
+                {([
+                  ['priority', 'Priority', 'P0=Critical, P1=High, P2=Medium, P3=Low'],
+                  ['title', 'Title', ''],
+                  ['status', 'Status', 'backlog, triaged, in_progress, fixed, closed, wont_fix'],
+                  ['component', 'Component', 'Module/area of the codebase'],
+                  ['assignee', 'Assignee', 'Team member or Claude agent'],
+                ] as const).map(([key, label, tip]) => (
+                  <th key={key}
+                    className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs cursor-pointer select-none hover:text-n-text"
+                    title={tip || undefined}
+                    onClick={() => toggleSort(key as SortKey)}
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      {label}
+                      {sortKey === key ? (
+                        <span className="text-n-accent text-[10px]">{sortDir === 'asc' ? '▲' : '▼'}</span>
+                      ) : (
+                        <span className="text-n-text-dim text-[10px] opacity-0 group-hover:opacity-100">⇅</span>
+                      )}
+                    </span>
+                  </th>
+                ))}
                 <th className="py-1.5 text-n-text-secondary font-normal text-xs" title="Quick status change"></th>
               </tr>
             </thead>
             <tbody>
-              {issues.map((issue) => (
+              {sortedIssues.map((issue) => (
                 <tr key={issue.id} className="border-b border-n-border hover:bg-n-hover cursor-pointer group"
                   onClick={() => setSelectedId(issue.id)}>
                   <td className="py-2 pr-4"><PriorityBadge priority={issue.priority} /></td>
