@@ -42,6 +42,8 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     if (body.targetDate !== undefined) updateData.targetDate = body.targetDate ? new Date(body.targetDate) : null;
     if (body.dependencies !== undefined) updateData.dependencies = typeof body.dependencies === 'string' ? body.dependencies : JSON.stringify(body.dependencies);
     if (body.attachments !== undefined) updateData.attachments = typeof body.attachments === 'string' ? body.attachments : JSON.stringify(body.attachments);
+    if (body.owner !== undefined) updateData.owner = body.owner;
+    if (body.estimate !== undefined) updateData.estimate = body.estimate;
     if (body.sortOrder !== undefined) updateData.sortOrder = body.sortOrder;
     updateData.updatedAt = new Date();
 

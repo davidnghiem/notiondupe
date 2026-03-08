@@ -58,6 +58,8 @@ export async function POST(request: NextRequest) {
         targetDate: body.targetDate ? new Date(body.targetDate) : null,
         dependencies: body.dependencies ? (typeof body.dependencies === 'string' ? body.dependencies : JSON.stringify(body.dependencies)) : null,
         attachments: body.attachments ? (typeof body.attachments === 'string' ? body.attachments : JSON.stringify(body.attachments)) : null,
+        owner: body.owner || null,
+        estimate: body.estimate || null,
         sortOrder: body.sortOrder ?? 0,
       })
       .returning();

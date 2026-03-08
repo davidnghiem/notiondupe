@@ -69,11 +69,16 @@ export async function POST() {
         start_date TIMESTAMP,
         target_date TIMESTAMP,
         dependencies TEXT,
+        owner VARCHAR(100),
+        estimate VARCHAR(50),
         sort_order INTEGER DEFAULT 0,
         attachments TEXT,
         created_at TIMESTAMP DEFAULT now(),
         updated_at TIMESTAMP DEFAULT now()
       )`);
+    // Add new columns to existing roadmap_items table
+    await db.execute(sql`ALTER TABLE roadmap_items ADD COLUMN IF NOT EXISTS owner VARCHAR(100)`);
+    await db.execute(sql`ALTER TABLE roadmap_items ADD COLUMN IF NOT EXISTS estimate VARCHAR(50)`);
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS activities (
         id SERIAL PRIMARY KEY,

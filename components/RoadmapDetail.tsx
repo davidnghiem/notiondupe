@@ -21,6 +21,8 @@ interface RoadmapItemData {
   assignees: string[];
   startDate: string | null;
   targetDate: string | null;
+  owner: string | null;
+  estimate: string | null;
   dependencies: number[];
   sortOrder: number;
   attachments: Attachment[];
@@ -252,6 +254,27 @@ export function RoadmapDetail({ itemId, onClose, onUpdate, onDelete }: RoadmapDe
                   options={ROADMAP_STATUSES.map((s) => ({ value: s, label: ROADMAP_STATUS_LABELS[s] }))}
                   onSave={(v) => patchField('status', v)}
                   renderValue={(v) => <StatusBadge status={v} />}
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-4 py-1">
+              <span className="text-xs text-n-text-dim w-28 flex-shrink-0">Owner</span>
+              <div className="flex-1">
+                <InlineSelect
+                  value={item.owner || ''}
+                  options={[{ value: '', label: 'No owner' }, ...TEAM_MEMBERS.map((m) => ({ value: m, label: m }))]}
+                  onSave={(v) => patchField('owner', v || null)}
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-4 py-1">
+              <span className="text-xs text-n-text-dim w-28 flex-shrink-0">Estimate</span>
+              <div className="flex-1">
+                <InlineText
+                  value={item.estimate || ''}
+                  onSave={(v) => patchField('estimate', v || null)}
+                  placeholder="e.g. 2 weeks, 1 sprint"
+                  className="text-sm text-n-text"
                 />
               </div>
             </div>

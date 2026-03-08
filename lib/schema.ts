@@ -64,6 +64,8 @@ export const roadmapItems = pgTable('roadmap_items', {
   assignees: text('assignees'),
   startDate: timestamp('start_date'),
   targetDate: timestamp('target_date'),
+  owner: varchar('owner', { length: 100 }),
+  estimate: varchar('estimate', { length: 50 }),
   dependencies: text('dependencies'),
   sortOrder: integer('sort_order').default(0),
   attachments: text('attachments'),
