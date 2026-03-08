@@ -34,7 +34,12 @@ export async function GET(request: NextRequest) {
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(desc(issues.createdAt));
 
-    return NextResponse.json(result);
+    const parsed = result.map((item) => ({
+      ...item,
+      attachments: item.attachments ? JSON.parse(item.attachments) : [],
+      customFields: item.customFields ? JSON.parse(item.customFields) : {},
+    }));
+    return NextResponse.json(parsed);
   } catch (error) {
     console.error('Error fetching issues:', error);
     return NextResponse.json({ error: 'Failed to fetch issues' }, { status: 500 });
@@ -54,16 +59,23 @@ export async function POST(request: NextRequest) {
         title: body.title,
         description: body.description,
         priority: body.priority || 'P2',
-        status: body.status || 'new',
+        status: body.status || 'backlog',
         component: body.component,
         assignee: body.assignee,
         reporter: body.reporter,
         versionFound: body.versionFound,
         stepsToReproduce: body.stepsToReproduce,
+        attachments: body.attachments ? (typeof body.attachments === 'string' ? body.attachments : JSON.stringify(body.attachments)) : null,
+        customFields: body.customFields ? (typeof body.customFields === 'string' ? body.customFields : JSON.stringify(body.customFields)) : null,
       })
       .returning();
 
-    return NextResponse.json(newIssue[0], { status: 201 });
+    const issue = newIssue[0];
+    return NextResponse.json({
+      ...issue,
+      attachments: issue.attachments ? JSON.parse(issue.attachments) : [],
+      customFields: issue.customFields ? JSON.parse(issue.customFields) : {},
+    }, { status: 201 });
   } catch (error) {
     console.error('Error creating issue:', error);
     return NextResponse.json({ error: 'Failed to create issue' }, { status: 500 });

@@ -5,6 +5,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Task } from '@/lib/schema';
 import { PriorityBadge } from './PriorityBadge';
 import { LabelPill } from './LabelPill';
+import { StatusBadge } from './StatusBadge';
 
 interface TaskCardProps {
   task: Task;
@@ -40,24 +41,19 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
       style={style}
       {...attributes}
       {...listeners}
-      className={`bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 cursor-grab active:cursor-grabbing ${
+      className={`bg-n-surface p-3 rounded-lg border border-n-border shadow-[0_1px_2px_rgba(0,0,0,0.04)] cursor-grab active:cursor-grabbing hover:bg-n-hover group ${
         isDragging ? 'opacity-50 shadow-lg' : ''
       }`}
     >
       <div className="flex justify-between items-start gap-2">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 mb-1">
-            <PriorityBadge priority={task.priority} />
-            <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">
-              {task.title}
-            </h3>
-          </div>
-        </div>
-        <div className="flex gap-1 flex-shrink-0">
+        <h3 className="font-medium text-n-text text-sm leading-snug flex-1 min-w-0">
+          {task.title}
+        </h3>
+        <div className="flex gap-0.5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={(e) => { e.stopPropagation(); onEdit(task); }}
-            className="p-1 text-gray-400 hover:text-blue-500 transition-colors"
-            title="Edit task"
+            className="p-1 text-n-text-dim hover:text-n-text hover:bg-n-elevated rounded"
+            title="Edit"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -65,8 +61,8 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
-            className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-            title="Delete task"
+            className="p-1 text-n-text-dim hover:text-n-danger hover:bg-n-elevated rounded"
+            title="Delete"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -76,29 +72,31 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
       </div>
 
       {task.description && (
-        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+        <p className="text-xs text-n-text-secondary mt-1.5 line-clamp-2 leading-relaxed">
           {task.description}
         </p>
       )}
 
-      {parsedLabels.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
-          {parsedLabels.map((label) => (
-            <LabelPill key={label} label={label} />
-          ))}
+      {task.assignee && (
+        <div className="flex items-center gap-1.5 mt-2">
+          <div className="w-5 h-5 rounded-full bg-n-elevated flex items-center justify-center flex-shrink-0">
+            <span className="text-[10px] font-medium text-n-text-secondary">{task.assignee.charAt(0)}</span>
+          </div>
+          <span className="text-xs text-n-text-secondary">{task.assignee}</span>
         </div>
       )}
 
-      <div className="flex items-center justify-between mt-2">
-        <div className="flex items-center gap-2">
-          {task.assignee && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {task.assignee}
-            </span>
-          )}
-        </div>
+      <div className="flex flex-wrap items-center gap-1.5 mt-2">
+        <PriorityBadge priority={task.priority} />
+        {parsedLabels.map((label) => (
+          <LabelPill key={label} label={label} />
+        ))}
         {task.dueDate && (
-          <span className={`text-xs ${isOverdue ? 'text-red-500 font-medium' : 'text-gray-500 dark:text-gray-400'}`}>
+          <span className={`text-[11px] px-1.5 py-0.5 rounded-sm ${
+            isOverdue
+              ? 'bg-[rgba(235,87,87,0.15)] text-[rgba(235,87,87,1)]'
+              : 'bg-n-elevated text-n-text-dim'
+          }`}>
             {new Date(task.dueDate).toLocaleDateString()}
           </span>
         )}

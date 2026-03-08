@@ -1,14 +1,13 @@
 export const PRIORITIES = ['P0', 'P1', 'P2', 'P3'] as const;
 export const PRIORITY_LABELS: Record<string, string> = { P0: 'Critical', P1: 'High', P2: 'Medium', P3: 'Low' };
-export const PRIORITY_COLORS: Record<string, string> = { P0: '#EF4444', P1: '#F97316', P2: '#EAB308', P3: '#6B7280' };
+export const PRIORITY_COLORS: Record<string, string> = { P0: '#eb5757', P1: '#d9730d', P2: '#cb912f', P3: '#787774' };
 
-export const ISSUE_STATUSES = ['new', 'triaged', 'in_progress', 'fixed', 'verified', 'closed', 'wont_fix'] as const;
+export const ISSUE_STATUSES = ['backlog', 'triaged', 'in_progress', 'fixed', 'closed', 'wont_fix'] as const;
 export const ISSUE_STATUS_LABELS: Record<string, string> = {
-  new: 'New',
+  backlog: 'Backlog',
   triaged: 'Triaged',
   in_progress: 'In Progress',
   fixed: 'Fixed',
-  verified: 'Verified',
   closed: 'Closed',
   wont_fix: "Won't Fix",
 };

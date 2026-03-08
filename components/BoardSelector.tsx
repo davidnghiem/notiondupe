@@ -24,7 +24,7 @@ export function BoardSelector({ currentBoardId, onBoardChange }: BoardSelectorPr
     <select
       value={currentBoardId}
       onChange={(e) => onBoardChange(parseInt(e.target.value))}
-      className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none"
+      className="px-3 py-1.5 text-sm border border-n-border-strong rounded-lg bg-n-surface text-n-text focus:ring-1 focus:ring-n-accent outline-none"
     >
       {boardList.map((board) => (
         <option key={board.id} value={board.id}>

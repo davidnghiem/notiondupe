@@ -19,6 +19,7 @@ export async function GET(request: NextRequest, { params }: Params) {
       ...r,
       assignees: r.assignees ? JSON.parse(r.assignees) : [],
       dependencies: r.dependencies ? JSON.parse(r.dependencies) : [],
+      attachments: r.attachments ? JSON.parse(r.attachments) : [],
     });
   } catch (error) {
     console.error('Error fetching roadmap item:', error);
@@ -40,6 +41,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     if (body.startDate !== undefined) updateData.startDate = body.startDate ? new Date(body.startDate) : null;
     if (body.targetDate !== undefined) updateData.targetDate = body.targetDate ? new Date(body.targetDate) : null;
     if (body.dependencies !== undefined) updateData.dependencies = typeof body.dependencies === 'string' ? body.dependencies : JSON.stringify(body.dependencies);
+    if (body.attachments !== undefined) updateData.attachments = typeof body.attachments === 'string' ? body.attachments : JSON.stringify(body.attachments);
     if (body.sortOrder !== undefined) updateData.sortOrder = body.sortOrder;
     updateData.updatedAt = new Date();
 
@@ -57,6 +59,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       ...r,
       assignees: r.assignees ? JSON.parse(r.assignees) : [],
       dependencies: r.dependencies ? JSON.parse(r.dependencies) : [],
+      attachments: r.attachments ? JSON.parse(r.attachments) : [],
     });
   } catch (error) {
     console.error('Error updating roadmap item:', error);

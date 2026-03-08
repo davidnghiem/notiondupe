@@ -4,13 +4,17 @@ import { useState, useEffect, useCallback } from 'react';
 import { Issue } from '@/lib/schema';
 import { PriorityBadge } from './PriorityBadge';
 import { StatusBadge } from './StatusBadge';
+import { IssueDetail } from './IssueDetail';
 import { PRIORITIES, ISSUE_STATUSES, ISSUE_STATUS_LABELS, COMPONENTS, TEAM_MEMBERS } from '@/lib/constants';
+
+const selectCls = "px-2 py-1.5 text-sm border-none rounded bg-n-elevated text-n-text outline-none focus:ring-1 focus:ring-n-accent placeholder:text-n-text-dim";
+const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded bg-n-elevated text-n-text focus:ring-1 focus:ring-n-accent outline-none placeholder:text-n-text-dim text-sm";
 
 export function IssueList() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ priority: '', status: '', component: '', assignee: '', search: '' });
-  const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
 
   const fetchIssues = useCallback(async () => {
@@ -49,17 +53,13 @@ export function IssueList() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Delete this issue?')) return;
     await fetch(`/api/issues/${id}`, { method: 'DELETE' });
-    setSelectedIssue(null);
+    setSelectedId(null);
     fetchIssues();
   };
 
-  const selectCls = "px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none";
-
   return (
     <div>
-      {/* Filter bar */}
       <div className="flex flex-wrap gap-2 mb-4 items-center">
         <input
           type="text" placeholder="Search issues..."
@@ -83,42 +83,41 @@ export function IssueList() {
           {TEAM_MEMBERS.map((m) => <option key={m} value={m}>{m}</option>)}
         </select>
         <button onClick={() => setShowCreate(true)}
-          className="px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors">
-          + New Issue
+          className="px-3 py-1.5 bg-n-accent text-white rounded text-sm font-medium hover:bg-n-accent-hover">
+          New
         </button>
       </div>
 
-      {/* Table */}
       {loading ? (
-        <div className="text-center py-8 text-gray-500">Loading issues...</div>
+        <div className="text-center py-8 text-n-text-dim">Loading issues...</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700 text-left">
-                <th className="py-2 pr-4 text-gray-500 dark:text-gray-400 font-medium">Priority</th>
-                <th className="py-2 pr-4 text-gray-500 dark:text-gray-400 font-medium">Title</th>
-                <th className="py-2 pr-4 text-gray-500 dark:text-gray-400 font-medium">Status</th>
-                <th className="py-2 pr-4 text-gray-500 dark:text-gray-400 font-medium">Component</th>
-                <th className="py-2 pr-4 text-gray-500 dark:text-gray-400 font-medium">Assignee</th>
-                <th className="py-2 text-gray-500 dark:text-gray-400 font-medium">Actions</th>
+              <tr className="border-b border-n-border-strong text-left">
+                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Priority</th>
+                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Title</th>
+                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Status</th>
+                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Component</th>
+                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Assignee</th>
+                <th className="py-1.5 text-n-text-secondary font-normal text-xs"></th>
               </tr>
             </thead>
             <tbody>
               {issues.map((issue) => (
-                <tr key={issue.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer"
-                  onClick={() => setSelectedIssue(issue)}>
-                  <td className="py-2.5 pr-4"><PriorityBadge priority={issue.priority} /></td>
-                  <td className="py-2.5 pr-4 text-gray-900 dark:text-gray-100 font-medium">{issue.title}</td>
-                  <td className="py-2.5 pr-4"><StatusBadge status={issue.status} /></td>
-                  <td className="py-2.5 pr-4 text-gray-600 dark:text-gray-400">{issue.component || '—'}</td>
-                  <td className="py-2.5 pr-4 text-gray-600 dark:text-gray-400">{issue.assignee || '—'}</td>
-                  <td className="py-2.5">
+                <tr key={issue.id} className="border-b border-n-border hover:bg-n-hover cursor-pointer group"
+                  onClick={() => setSelectedId(issue.id)}>
+                  <td className="py-2 pr-4"><PriorityBadge priority={issue.priority} /></td>
+                  <td className="py-2 pr-4 text-n-text text-sm">{issue.title}</td>
+                  <td className="py-2 pr-4"><StatusBadge status={issue.status} /></td>
+                  <td className="py-2 pr-4 text-n-text-secondary text-sm">{issue.component || ''}</td>
+                  <td className="py-2 pr-4 text-n-text-secondary text-sm">{issue.assignee || ''}</td>
+                  <td className="py-2">
                     <select
                       value={issue.status}
                       onChange={(e) => { e.stopPropagation(); handleStatusChange(issue.id, e.target.value); }}
                       onClick={(e) => e.stopPropagation()}
-                      className="text-xs px-1.5 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                      className="text-xs px-1.5 py-0.5 border-none rounded bg-transparent text-n-text-dim opacity-0 group-hover:opacity-100 focus:opacity-100 outline-none"
                     >
                       {ISSUE_STATUSES.map((s) => <option key={s} value={s}>{ISSUE_STATUS_LABELS[s]}</option>)}
                     </select>
@@ -126,52 +125,22 @@ export function IssueList() {
                 </tr>
               ))}
               {issues.length === 0 && (
-                <tr><td colSpan={6} className="py-8 text-center text-gray-500">No issues found</td></tr>
+                <tr><td colSpan={6} className="py-8 text-center text-n-text-dim">No issues found</td></tr>
               )}
             </tbody>
           </table>
         </div>
       )}
 
-      {/* Detail modal */}
-      {selectedIssue && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setSelectedIssue(null)}>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-2">
-                <PriorityBadge priority={selectedIssue.priority} />
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{selectedIssue.title}</h2>
-              </div>
-              <button onClick={() => setSelectedIssue(null)} className="text-gray-400 hover:text-gray-600">&#x2715;</button>
-            </div>
-            <div className="space-y-3 text-sm">
-              <div className="flex gap-2"><StatusBadge status={selectedIssue.status} /></div>
-              {selectedIssue.description && <p className="text-gray-700 dark:text-gray-300">{selectedIssue.description}</p>}
-              <div className="grid grid-cols-2 gap-2 text-gray-600 dark:text-gray-400">
-                <div>Component: {selectedIssue.component || '—'}</div>
-                <div>Assignee: {selectedIssue.assignee || '—'}</div>
-                <div>Reporter: {selectedIssue.reporter || '—'}</div>
-                <div>Found in: {selectedIssue.versionFound || '—'}</div>
-                <div>Fixed in: {selectedIssue.versionFixed || '—'}</div>
-              </div>
-              {selectedIssue.stepsToReproduce && (
-                <div>
-                  <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">Steps to Reproduce</div>
-                  <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">{selectedIssue.stepsToReproduce}</p>
-                </div>
-              )}
-              <div className="flex gap-2 pt-2">
-                <button onClick={() => handleDelete(selectedIssue.id)}
-                  className="px-3 py-1.5 text-red-600 border border-red-300 rounded-lg text-sm hover:bg-red-50 dark:hover:bg-red-900/20">
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      {selectedId && (
+        <IssueDetail
+          issueId={selectedId}
+          onClose={() => setSelectedId(null)}
+          onUpdate={fetchIssues}
+          onDelete={handleDelete}
+        />
       )}
 
-      {/* Create modal */}
       {showCreate && (
         <CreateIssueModal onClose={() => setShowCreate(false)} onCreate={handleCreate} />
       )}
@@ -196,12 +165,10 @@ function CreateIssueModal({ onClose, onCreate }: { onClose: () => void; onCreate
     });
   };
 
-  const inputCls = "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none";
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">New Issue</h2>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+      <div className="bg-n-surface rounded-xl p-6 w-full max-w-md shadow-xl border border-n-border max-h-[90vh] overflow-y-auto">
+        <h2 className="text-lg font-semibold text-n-text mb-4">New Issue</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <input type="text" placeholder="Issue title *" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className={inputCls} autoFocus />
           <textarea placeholder="Description" rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={`${inputCls} resize-none`} />
@@ -226,8 +193,8 @@ function CreateIssueModal({ onClose, onCreate }: { onClose: () => void; onCreate
           </div>
           <textarea placeholder="Steps to reproduce" rows={2} value={form.stepsToReproduce} onChange={(e) => setForm({ ...form, stepsToReproduce: e.target.value })} className={`${inputCls} resize-none`} />
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
-            <button type="submit" disabled={!form.title.trim()} className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed">Create</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 border border-n-border-strong text-n-text-secondary rounded-lg hover:bg-n-hover">Cancel</button>
+            <button type="submit" disabled={!form.title.trim()} className="flex-1 px-4 py-2 bg-n-accent text-white rounded-lg hover:bg-n-accent-hover disabled:opacity-50 disabled:cursor-not-allowed">Create</button>
           </div>
         </form>
       </div>

@@ -21,6 +21,8 @@ interface AddTaskModalProps {
   editTask?: Task | null;
 }
 
+const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded-lg bg-n-elevated text-n-text focus:ring-1 focus:ring-n-accent outline-none placeholder:text-n-text-dim";
+
 export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: AddTaskModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -80,40 +82,36 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: Ad
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+      <div className="bg-n-surface rounded-xl p-6 w-full max-w-md shadow-xl border border-n-border max-h-[90vh] overflow-y-auto">
+        <h2 className="text-lg font-semibold text-n-text mb-4">
           {editTask ? 'Edit Task' : 'Add New Task'}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title *</label>
+            <label className="block text-sm font-medium text-n-text-secondary mb-1">Title *</label>
             <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="Task title" autoFocus />
+              className={inputCls} placeholder="Task title" autoFocus />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+            <label className="block text-sm font-medium text-n-text-secondary mb-1">Description</label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-              placeholder="Task description (optional)" />
+              className={`${inputCls} resize-none`} placeholder="Task description (optional)" />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
-              <select value={priority} onChange={(e) => setPriority(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none">
+              <label className="block text-sm font-medium text-n-text-secondary mb-1">Priority</label>
+              <select value={priority} onChange={(e) => setPriority(e.target.value)} className={inputCls}>
                 <option value="">None</option>
                 {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Assignee</label>
-              <select value={assignee} onChange={(e) => setAssignee(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none">
+              <label className="block text-sm font-medium text-n-text-secondary mb-1">Assignee</label>
+              <select value={assignee} onChange={(e) => setAssignee(e.target.value)} className={inputCls}>
                 <option value="">Unassigned</option>
                 {TEAM_MEMBERS.map((m) => <option key={m} value={m}>{m}</option>)}
               </select>
@@ -121,20 +119,19 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: Ad
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Due Date</label>
-            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none" />
+            <label className="block text-sm font-medium text-n-text-secondary mb-1">Due Date</label>
+            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputCls} />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Labels</label>
+            <label className="block text-sm font-medium text-n-text-secondary mb-1">Labels</label>
             <div className="flex flex-wrap gap-1.5">
               {COMPONENTS.map((label) => (
                 <button key={label} type="button" onClick={() => toggleLabel(label)}
-                  className={`px-2 py-1 rounded-full text-xs font-medium transition-colors ${
+                  className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
                     selectedLabels.includes(label)
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                      ? 'bg-n-accent text-white'
+                      : 'bg-n-elevated text-n-text-secondary hover:bg-n-hover'
                   }`}>
                   {label}
                 </button>
@@ -143,19 +140,18 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: Ad
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Notes</label>
+            <label className="block text-sm font-medium text-n-text-secondary mb-1">Notes</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-              placeholder="Additional notes (optional)" />
+              className={`${inputCls} resize-none`} placeholder="Additional notes (optional)" />
           </div>
 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              className="flex-1 px-4 py-2 border border-n-border-strong text-n-text-secondary rounded-lg hover:bg-n-hover">
               Cancel
             </button>
             <button type="submit" disabled={!title.trim()}
-              className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+              className="flex-1 px-4 py-2 bg-n-accent text-white rounded-lg hover:bg-n-accent-hover disabled:opacity-50 disabled:cursor-not-allowed">
               {editTask ? 'Save Changes' : 'Add Task'}
             </button>
           </div>

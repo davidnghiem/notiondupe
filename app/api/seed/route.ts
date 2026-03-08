@@ -30,13 +30,13 @@ export async function POST() {
     const existingIssues = await db.select().from(issues);
     if (existingIssues.length === 0) {
       await db.insert(issues).values([
-        { title: '57 console.log statements in production', priority: 'P1', status: 'new', component: 'Other', reporter: "Nghiem's Claude" },
-        { title: '12 completely empty catch blocks', priority: 'P1', status: 'new', component: 'Other', reporter: "Nghiem's Claude" },
-        { title: 'firebase-admin version mismatch (root ^13.6.1 vs functions ^12.0.0)', priority: 'P1', status: 'new', component: 'Cloud Functions', reporter: "Nghiem's Claude" },
-        { title: '6 modals on old pre-al-* styling', priority: 'P2', status: 'new', component: 'Dashboard', reporter: "Nghiem's Claude" },
-        { title: 'Dead code (openActivityModal references)', priority: 'P2', status: 'new', component: 'Activity', reporter: "Nghiem's Claude" },
-        { title: 'Stale docs referencing full-page order detail (now modal v67.4)', priority: 'P2', status: 'new', component: 'Orders', reporter: "Nghiem's Claude" },
-        { title: 'Voice recording debug logs in quick-log.js', priority: 'P3', status: 'new', component: 'Other', reporter: "Nghiem's Claude" },
+        { title: '57 console.log statements in production', priority: 'P1', status: 'backlog', component: 'Other', reporter: "Nghiem's Claude" },
+        { title: '12 completely empty catch blocks', priority: 'P1', status: 'backlog', component: 'Other', reporter: "Nghiem's Claude" },
+        { title: 'firebase-admin version mismatch (root ^13.6.1 vs functions ^12.0.0)', priority: 'P1', status: 'backlog', component: 'Cloud Functions', reporter: "Nghiem's Claude" },
+        { title: '6 modals on old pre-al-* styling', priority: 'P2', status: 'backlog', component: 'Dashboard', reporter: "Nghiem's Claude" },
+        { title: 'Dead code (openActivityModal references)', priority: 'P2', status: 'backlog', component: 'Activity', reporter: "Nghiem's Claude" },
+        { title: 'Stale docs referencing full-page order detail (now modal v67.4)', priority: 'P2', status: 'backlog', component: 'Orders', reporter: "Nghiem's Claude" },
+        { title: 'Voice recording debug logs in quick-log.js', priority: 'P3', status: 'backlog', component: 'Other', reporter: "Nghiem's Claude" },
       ]);
     }
 

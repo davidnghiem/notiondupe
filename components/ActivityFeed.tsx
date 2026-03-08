@@ -12,6 +12,8 @@ interface ActivityEntry {
   createdAt: string;
 }
 
+const selectCls = "px-2 py-1.5 text-sm border-none rounded bg-n-elevated text-n-text outline-none focus:ring-1 focus:ring-n-accent";
+
 export function ActivityFeed() {
   const [entries, setEntries] = useState<ActivityEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,8 +62,6 @@ export function ActivityFeed() {
     fetchEntries(true);
   };
 
-  const selectCls = "px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none";
-
   return (
     <div>
       <div className="flex flex-wrap gap-2 mb-4 items-center">
@@ -71,13 +71,13 @@ export function ActivityFeed() {
         </select>
         <div className="flex-1" />
         <button onClick={() => setShowPost(!showPost)}
-          className="px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors">
-          + Post Entry
+          className="px-3 py-1.5 bg-n-accent text-white rounded text-sm font-medium hover:bg-n-accent-hover">
+          New
         </button>
       </div>
 
       {showPost && (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+        <div className="bg-n-surface border border-n-border rounded-lg p-4 mb-4">
           <div className="flex gap-2 mb-2">
             <select value={postActor} onChange={(e) => setPostActor(e.target.value)}
               className={`${selectCls} flex-shrink-0`}>
@@ -86,10 +86,10 @@ export function ActivityFeed() {
             </select>
             <input type="text" placeholder="What did you do?" value={postAction}
               onChange={(e) => setPostAction(e.target.value)}
-              className="flex-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none"
+              className="flex-1 px-3 py-1.5 text-sm border border-n-border-strong rounded bg-n-elevated text-n-text outline-none placeholder:text-n-text-dim focus:ring-1 focus:ring-n-accent"
               onKeyDown={(e) => e.key === 'Enter' && handlePost()} />
             <button onClick={handlePost} disabled={!postActor || !postAction.trim()}
-              className="px-3 py-1.5 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed">
+              className="px-3 py-1.5 bg-n-success text-white rounded-lg text-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
               Post
             </button>
           </div>
@@ -97,24 +97,24 @@ export function ActivityFeed() {
       )}
 
       {loading ? (
-        <div className="text-center py-8 text-gray-500">Loading activity...</div>
+        <div className="text-center py-8 text-n-text-dim">Loading activity...</div>
       ) : entries.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No activity yet</div>
+        <div className="text-center py-8 text-n-text-dim">No activity yet</div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {entries.map((entry) => (
-            <div key={entry.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+            <div key={entry.id} className="bg-n-surface border border-n-border rounded-lg p-3 hover:bg-n-hover">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
-                  <span className="font-medium text-gray-900 dark:text-gray-100 text-sm">{entry.actor}</span>
-                  <span className="text-gray-500 dark:text-gray-400 text-sm ml-2">{entry.action}</span>
+                  <span className="font-medium text-n-text text-sm">{entry.actor}</span>
+                  <span className="text-n-text-secondary text-sm ml-2">{entry.action}</span>
                 </div>
-                <span className="text-xs text-gray-400 flex-shrink-0">
+                <span className="text-xs text-n-text-dim flex-shrink-0">
                   {new Date(entry.createdAt).toLocaleString()}
                 </span>
               </div>
               {entry.context && (
-                <div className="mt-1 text-xs text-blue-500">
+                <div className="mt-1 text-xs text-n-accent">
                   {entry.context.type} #{entry.context.id}
                 </div>
               )}
@@ -123,7 +123,7 @@ export function ActivityFeed() {
 
           {hasMore && (
             <button onClick={() => fetchEntries(false)}
-              className="w-full py-2 text-sm text-blue-500 hover:text-blue-600 transition-colors">
+              className="w-full py-2 text-sm text-n-accent hover:text-n-accent-hover">
               Load More
             </button>
           )}

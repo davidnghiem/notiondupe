@@ -14,7 +14,12 @@ export async function GET(request: NextRequest, { params }: Params) {
     if (issue.length === 0) {
       return NextResponse.json({ error: 'Issue not found' }, { status: 404 });
     }
-    return NextResponse.json(issue[0]);
+    const r = issue[0];
+    return NextResponse.json({
+      ...r,
+      attachments: r.attachments ? JSON.parse(r.attachments) : [],
+      customFields: r.customFields ? JSON.parse(r.customFields) : {},
+    });
   } catch (error) {
     console.error('Error fetching issue:', error);
     return NextResponse.json({ error: 'Failed to fetch issue' }, { status: 500 });
@@ -31,6 +36,8 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     for (const field of fields) {
       if (body[field] !== undefined) updateData[field] = body[field];
     }
+    if (body.attachments !== undefined) updateData.attachments = typeof body.attachments === 'string' ? body.attachments : JSON.stringify(body.attachments);
+    if (body.customFields !== undefined) updateData.customFields = typeof body.customFields === 'string' ? body.customFields : JSON.stringify(body.customFields);
     updateData.updatedAt = new Date();
 
     const updated = await db
@@ -42,7 +49,12 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     if (updated.length === 0) {
       return NextResponse.json({ error: 'Issue not found' }, { status: 404 });
     }
-    return NextResponse.json(updated[0]);
+    const r = updated[0];
+    return NextResponse.json({
+      ...r,
+      attachments: r.attachments ? JSON.parse(r.attachments) : [],
+      customFields: r.customFields ? JSON.parse(r.customFields) : {},
+    });
   } catch (error) {
     console.error('Error updating issue:', error);
     return NextResponse.json({ error: 'Failed to update issue' }, { status: 500 });

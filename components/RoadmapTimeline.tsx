@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { StatusBadge } from './StatusBadge';
+import { RoadmapDetail } from './RoadmapDetail';
 import { ROADMAP_PHASES, ROADMAP_PHASE_LABELS, ROADMAP_STATUSES, ROADMAP_STATUS_LABELS, TEAM_MEMBERS } from '@/lib/constants';
 
 interface RoadmapItemData {
@@ -17,11 +18,15 @@ interface RoadmapItemData {
   sortOrder: number;
 }
 
+const selectCls = "px-2 py-1.5 text-sm border-none rounded bg-n-elevated text-n-text outline-none focus:ring-1 focus:ring-n-accent";
+const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded-lg bg-n-elevated text-n-text focus:ring-1 focus:ring-n-accent outline-none placeholder:text-n-text-dim";
+
 export function RoadmapTimeline() {
   const [items, setItems] = useState<RoadmapItemData[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ phase: '', status: '', assignee: '' });
   const [showCreate, setShowCreate] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const fetchItems = useCallback(async () => {
     const params = new URLSearchParams();
@@ -46,8 +51,8 @@ export function RoadmapTimeline() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Delete this roadmap item?')) return;
     await fetch(`/api/roadmap/${id}`, { method: 'DELETE' });
+    setSelectedId(null);
     fetchItems();
   };
 
@@ -55,8 +60,6 @@ export function RoadmapTimeline() {
     acc[phase] = items.filter((item) => item.phase === phase);
     return acc;
   }, {} as Record<string, RoadmapItemData[]>);
-
-  const selectCls = "px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none";
 
   return (
     <div>
@@ -71,13 +74,13 @@ export function RoadmapTimeline() {
         </select>
         <div className="flex-1" />
         <button onClick={() => setShowCreate(true)}
-          className="px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors">
-          + New Item
+          className="px-3 py-1.5 bg-n-accent text-white rounded-lg text-sm hover:bg-n-accent-hover">
+          New
         </button>
       </div>
 
       {loading ? (
-        <div className="text-center py-8 text-gray-500">Loading roadmap...</div>
+        <div className="text-center py-8 text-n-text-dim">Loading roadmap...</div>
       ) : (
         <div className="space-y-6">
           {ROADMAP_PHASES.map((phase) => {
@@ -85,43 +88,36 @@ export function RoadmapTimeline() {
             if (filters.phase && filters.phase !== phase) return null;
             return (
               <div key={phase}>
-                <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                <h3 className="text-xs font-medium text-n-text-secondary mb-3">
                   {ROADMAP_PHASE_LABELS[phase]}
-                  <span className="ml-2 text-gray-400">({phaseItems.length})</span>
+                  <span className="ml-2 font-normal">({phaseItems.length})</span>
                 </h3>
                 {phaseItems.length === 0 ? (
-                  <div className="text-sm text-gray-400 py-2">No items</div>
+                  <div className="text-sm text-n-text-dim py-2">No items</div>
                 ) : (
                   <div className="space-y-2">
                     {phaseItems.map((item) => (
-                      <div key={item.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-gray-900 dark:text-gray-100 text-sm">{item.title}</h4>
-                              <StatusBadge status={item.status} />
-                            </div>
-                            {item.description && (
-                              <p className="text-xs text-gray-600 dark:text-gray-400">{item.description}</p>
-                            )}
-                            <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
-                              {item.assignees.length > 0 && (
-                                <span>{item.assignees.join(', ')}</span>
-                              )}
-                              {item.startDate && item.targetDate && (
-                                <span>{new Date(item.startDate).toLocaleDateString()} → {new Date(item.targetDate).toLocaleDateString()}</span>
-                              )}
-                              {item.dependencies.length > 0 && (
-                                <span className="text-orange-500">Depends on: #{item.dependencies.join(', #')}</span>
-                              )}
-                            </div>
+                      <div key={item.id} className="bg-n-surface border border-n-border rounded-lg p-3 hover:bg-n-hover cursor-pointer"
+                        onClick={() => setSelectedId(item.id)}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-n-text text-sm">{item.title}</h4>
+                            <StatusBadge status={item.status} />
                           </div>
-                          <button onClick={() => handleDelete(item.id)}
-                            className="p-1 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0" title="Delete">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
+                          {item.description && (
+                            <p className="text-xs text-n-text-secondary">{item.description}</p>
+                          )}
+                          <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-n-text-dim">
+                            {item.assignees.length > 0 && (
+                              <span>{item.assignees.join(', ')}</span>
+                            )}
+                            {item.startDate && item.targetDate && (
+                              <span>{new Date(item.startDate).toLocaleDateString()} → {new Date(item.targetDate).toLocaleDateString()}</span>
+                            )}
+                            {item.dependencies.length > 0 && (
+                              <span className="text-n-warning">Depends on: #{item.dependencies.join(', #')}</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -131,6 +127,15 @@ export function RoadmapTimeline() {
             );
           })}
         </div>
+      )}
+
+      {selectedId && (
+        <RoadmapDetail
+          itemId={selectedId}
+          onClose={() => setSelectedId(null)}
+          onUpdate={fetchItems}
+          onDelete={handleDelete}
+        />
       )}
 
       {showCreate && <CreateRoadmapModal onClose={() => setShowCreate(false)} onCreate={handleCreate} />}
@@ -164,12 +169,10 @@ function CreateRoadmapModal({ onClose, onCreate }: { onClose: () => void; onCrea
     });
   };
 
-  const inputCls = "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none";
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">New Roadmap Item</h2>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+      <div className="bg-n-surface rounded-xl p-6 w-full max-w-md shadow-xl border border-n-border max-h-[90vh] overflow-y-auto">
+        <h2 className="text-lg font-semibold text-n-text mb-4">New Roadmap Item</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <input type="text" placeholder="Title *" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className={inputCls} autoFocus />
           <textarea placeholder="Description" rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={`${inputCls} resize-none`} />
@@ -182,29 +185,29 @@ function CreateRoadmapModal({ onClose, onCreate }: { onClose: () => void; onCrea
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Assignees</label>
+            <label className="block text-sm font-medium text-n-text-secondary mb-1">Assignees</label>
             <div className="flex flex-wrap gap-1.5">
               {TEAM_MEMBERS.map((m) => (
                 <button key={m} type="button" onClick={() => toggleAssignee(m)}
-                  className={`px-2 py-1 rounded-full text-xs font-medium transition-colors ${
-                    form.assignees.includes(m) ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                  className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                    form.assignees.includes(m) ? 'bg-n-accent text-white' : 'bg-n-elevated text-n-text-secondary hover:bg-n-hover'
                   }`}>{m}</button>
               ))}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Start Date</label>
+              <label className="block text-xs text-n-text-dim mb-1">Start Date</label>
               <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} className={inputCls} />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Target Date</label>
+              <label className="block text-xs text-n-text-dim mb-1">Target Date</label>
               <input type="date" value={form.targetDate} onChange={(e) => setForm({ ...form, targetDate: e.target.value })} className={inputCls} />
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
-            <button type="submit" disabled={!form.title.trim()} className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed">Create</button>
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 border border-n-border-strong text-n-text-secondary rounded-lg hover:bg-n-hover">Cancel</button>
+            <button type="submit" disabled={!form.title.trim()} className="flex-1 px-4 py-2 bg-n-accent text-white rounded-lg hover:bg-n-accent-hover disabled:opacity-50 disabled:cursor-not-allowed">Create</button>
           </div>
         </form>
       </div>

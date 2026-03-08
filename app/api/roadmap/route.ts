@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
       ...item,
       assignees: item.assignees ? JSON.parse(item.assignees) : [],
       dependencies: item.dependencies ? JSON.parse(item.dependencies) : [],
+      attachments: item.attachments ? JSON.parse(item.attachments) : [],
     }));
 
     return NextResponse.json(parsed);
@@ -56,6 +57,7 @@ export async function POST(request: NextRequest) {
         startDate: body.startDate ? new Date(body.startDate) : null,
         targetDate: body.targetDate ? new Date(body.targetDate) : null,
         dependencies: body.dependencies ? (typeof body.dependencies === 'string' ? body.dependencies : JSON.stringify(body.dependencies)) : null,
+        attachments: body.attachments ? (typeof body.attachments === 'string' ? body.attachments : JSON.stringify(body.attachments)) : null,
         sortOrder: body.sortOrder ?? 0,
       })
       .returning();
@@ -65,6 +67,7 @@ export async function POST(request: NextRequest) {
       ...item,
       assignees: item.assignees ? JSON.parse(item.assignees) : [],
       dependencies: item.dependencies ? JSON.parse(item.dependencies) : [],
+      attachments: item.attachments ? JSON.parse(item.attachments) : [],
     }, { status: 201 });
   } catch (error) {
     console.error('Error creating roadmap item:', error);
