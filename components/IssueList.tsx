@@ -8,7 +8,7 @@ import { IssueDetail } from './IssueDetail';
 import { PRIORITIES, PRIORITY_LABELS, PRIORITY_COLORS, ISSUE_STATUSES, ISSUE_STATUS_LABELS, COMPONENTS, TEAM_MEMBERS } from '@/lib/constants';
 import { FilterBar } from './MultiSelectFilter';
 
-type SortKey = 'priority' | 'title' | 'status' | 'component' | 'assignee' | null;
+type SortKey = 'priority' | 'title' | 'status' | 'component' | 'assignee' | 'created' | null;
 type SortDir = 'asc' | 'desc';
 
 const PRIORITY_ORDER: Record<string, number> = { P0: 0, P1: 1, P2: 2, P3: 3 };
@@ -26,7 +26,7 @@ export function IssueList() {
   const [multiFilters, setMultiFilters] = useState<Record<string, string[]>>({});
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
-  const [sortKey, setSortKey] = useState<SortKey>(null);
+  const [sortKey, setSortKey] = useState<SortKey>('priority');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
 
   const toggleSort = (key: SortKey) => {
@@ -68,6 +68,9 @@ export function IssueList() {
           break;
         case 'assignee':
           cmp = (a.assignee || '').localeCompare(b.assignee || '');
+          break;
+        case 'created':
+          cmp = (a.createdAt ? new Date(a.createdAt).getTime() : 0) - (b.createdAt ? new Date(b.createdAt).getTime() : 0);
           break;
       }
       return sortDir === 'asc' ? cmp : -cmp;
@@ -161,6 +164,7 @@ export function IssueList() {
                   ['status', 'Status', 'backlog, triaged, in_progress, fixed, closed, wont_fix'],
                   ['component', 'Component', 'Module/area of the codebase'],
                   ['assignee', 'Assignee', 'Team member or Claude agent'],
+                  ['created', 'Created', 'Date issue was created'],
                 ] as const).map(([key, label, tip]) => (
                   <th key={key}
                     className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs cursor-pointer select-none hover:text-n-text"
@@ -189,6 +193,9 @@ export function IssueList() {
                   <td className="py-2 pr-4"><StatusBadge status={issue.status} /></td>
                   <td className="py-2 pr-4 text-n-text-secondary text-sm">{issue.component || ''}</td>
                   <td className="py-2 pr-4 text-n-text-secondary text-sm">{issue.assignee || ''}</td>
+                  <td className="py-2 pr-4 text-n-text-dim text-xs whitespace-nowrap">
+                    {issue.createdAt ? new Date(issue.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                  </td>
                   <td className="py-2">
                     <select
                       value={issue.status}
@@ -202,7 +209,7 @@ export function IssueList() {
                 </tr>
               ))}
               {issues.length === 0 && (
-                <tr><td colSpan={6} className="py-8 text-center text-n-text-dim">No issues found</td></tr>
+                <tr><td colSpan={7} className="py-8 text-center text-n-text-dim">No issues found</td></tr>
               )}
             </tbody>
           </table>
