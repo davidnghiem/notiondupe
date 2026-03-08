@@ -102,12 +102,25 @@ gh pr create --title "Fix 12 empty catch blocks" --body "Added showToast() to al
 | `chore/` | Cleanup, infra, docs | `chore/console-log-cleanup` |
 | `refactor/` | Code restructuring | `refactor/activity-modal` |
 
+### PR Review Policy (IMPORTANT)
+
+**Cross-team review is required.** PRs must be reviewed by the other side before merging:
+
+| Who created the PR | Who reviews it |
+|-------------------|---------------|
+| Nghiem or Nghiem's Claude | **Kyle + Kyle's Claude** review |
+| Kyle or Kyle's Claude | **Nghiem + Nghiem's Claude** review |
+
+- **Self-merging is allowed only in emergencies** (production-breaking fix, nobody available). Even then, the other side should review the merged code afterward.
+- This applies to both humans and Claudes — if Kyle's Claude opens a PR, Nghiem's Claude should review it (and vice versa).
+- The goal is to catch issues early, share knowledge across the team, and keep everyone aware of what's changing.
+
 ### Rules
 - **One branch per task/issue** — don't bundle unrelated changes
 - **Keep PRs small** — easier to review, less risk
 - **Reference the issue number** in commit messages and PR descriptions (e.g. "Closes issue #9")
 - **Pull latest main** before creating a new branch
-- **Don't merge your own PR** if someone else is available to review — but if you're solo, self-merge is fine after giving it a once-over
+- **Don't merge your own PR** — wait for the other side to review. Self-merge only in emergencies
 
 ---
 
