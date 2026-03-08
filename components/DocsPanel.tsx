@@ -124,7 +124,7 @@ function OverviewSection() {
         {[
           { name: 'Kanban', desc: 'Drag-and-drop task board with columns. Supports priority, labels, assignees, due dates.' },
           { name: 'Issues', desc: 'Bug/issue tracker. Filterable table with inline editing, custom fields, and file attachments.' },
-          { name: 'Roadmap', desc: 'Timeline grouped by phase (Immediate, Short-term, Medium-term, Long-term). Click items to edit.' },
+          { name: 'Roadmap', desc: 'Color-coded timeline by phase. Supports owner, estimates, dependencies, and attachments. Click items to edit.' },
           { name: 'Activity', desc: 'Append-only feed. Immutable audit log — no edits, no deletes. Claudes auto-post here.' },
           { name: 'Decisions', desc: 'Architectural decision log. Tracks settled, open, and superseded decisions.' },
         ].map((tab) => (
@@ -201,7 +201,7 @@ function ApiSection() {
         ['PATCH', '/api/roadmap/[id]', 'Update item'],
         ['DELETE', '/api/roadmap/[id]', 'Delete item'],
       ]} />
-      <P>Fields: title, description, phase, status, assignees (JSON array), startDate, targetDate, dependencies (JSON array of IDs), sortOrder, attachments (JSON array)</P>
+      <P>Fields: title, description, phase, status, assignees (JSON array), startDate, targetDate, dependencies (JSON array of IDs), sortOrder, owner, estimate, attachments (JSON array)</P>
 
       <SubTitle>Activities (Append-Only)</SubTitle>
       <Table headers={['Method', 'Endpoint', 'Description']} rows={[
@@ -354,6 +354,8 @@ function ExamplesSection() {
   "phase": "medium_term",
   "status": "backlog",
   "assignees": ["Kyle's Claude"],
+  "owner": "Kyle",
+  "estimate": "3 sprints",
   "dependencies": [3]
 }`}</Code>
 

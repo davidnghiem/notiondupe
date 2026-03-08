@@ -11,11 +11,23 @@ Project management tool for the MWAH CRM team. Used by both humans and AI agents
 
 | Tab | Purpose |
 |-----|---------|
-| **Kanban** | Drag-and-drop task board with columns (Backlog, To Do, In Progress, In Review, Done, Blocked). Filterable by assignee and priority. |
-| **Issues** | Bug/issue tracker with filterable table, sortable columns, inline editing, custom fields, file attachments |
-| **Roadmap** | High-level feature/project timeline grouped by phase (Immediate, Short-term, Medium-term, Long-term) |
-| **Activity** | Append-only activity feed — immutable audit log of what everyone did |
+| **Kanban** | Drag-and-drop task board with columns. Multi-select filters for assignee and priority. Shows creation dates on cards. |
+| **Issues** | Bug/issue tracker with sortable table, Notion-style multi-select filters, inline editing, custom fields, file attachments |
+| **Roadmap** | Feature timeline grouped by phase with color-coded cards, owner assignment, time estimates, and multi-select filters |
+| **Activity** | Append-only activity feed with color-coded actor avatars — immutable audit log |
 | **Decisions** | Architectural decision log with statuses (Settled, Open, Superseded) |
+
+---
+
+## UI Features
+
+- **Notion-style multi-select filters** across Kanban, Issues, and Roadmap tabs — click "+ Filter" to add filter dimensions, select multiple values with checkboxes
+- **Color-coded navigation** — each tab has a distinct accent color (blue, red, amber, green, purple)
+- **Color-coded actors** — team members have consistent colors across Activity feed and Roadmap owner avatars
+- **Phase-colored roadmap** — Immediate (red), Short-term (orange), Medium-term (blue), Long-term (gray) with colored card borders and headers
+- **Inline editing** — click any property in Issue or Roadmap detail panels to edit in place
+- **File attachments** — drag-and-drop file uploads via Supabase Storage on Issues and Roadmap items
+- **Sortable columns** — click column headers in the Issues table to sort by priority, status, title, component, or assignee
 
 ---
 
@@ -57,8 +69,6 @@ All endpoints return JSON. Base URL is your deployment root (e.g. `https://your-
 
 **Components:** Orders, Email, Calendar, Dashboard, Store Detail, Contact Detail, Admin, Map, Activity, Auth, Cloud Functions, Other
 
-**Sorting:** Click any column header (Priority, Title, Status, Component, Assignee) to sort. Click again to reverse. Click a third time to clear. Priority sorts by severity (P0→P3), Status sorts by workflow order.
-
 ### Roadmap
 
 **Important:** The Roadmap is for **high-level projects and features only** — things like "Store Portal v1", "Analytics Dashboards", "CSV Reconciliation". Do NOT put small tasks, bug fixes, or infrastructure work here. Those belong in **Issues** (for bugs/problems) or **Kanban** (for task tracking). If it takes less than a week or isn't a distinct product feature, it's not a roadmap item.
@@ -71,7 +81,7 @@ All endpoints return JSON. Base URL is your deployment root (e.g. `https://your-
 | `PATCH` | `/api/roadmap/[id]` | Update item (any subset of fields) |
 | `DELETE` | `/api/roadmap/[id]` | Delete item |
 
-**POST/PATCH body fields:** `title`, `description`, `phase`, `status`, `assignees` (JSON array), `startDate`, `targetDate`, `dependencies` (JSON array of IDs), `sortOrder`, `attachments` (JSON array)
+**POST/PATCH body fields:** `title`, `description`, `phase`, `status`, `assignees` (JSON array), `startDate`, `targetDate`, `dependencies` (JSON array of IDs), `sortOrder`, `owner`, `estimate`, `attachments` (JSON array)
 
 **Phases:** `immediate`, `short_term`, `medium_term`, `long_term`
 **Statuses:** `backlog`, `mockup`, `approved`, `in_progress`, `done`
@@ -147,10 +157,10 @@ curl -X PATCH https://your-app.vercel.app/api/issues/7 \
 # Check decisions before modifying orders code
 curl https://your-app.vercel.app/api/decisions?category=Orders
 
-# Add a roadmap item
+# Add a roadmap item with owner and estimate
 curl -X POST https://your-app.vercel.app/api/roadmap \
   -H "Content-Type: application/json" \
-  -d '{"title": "Store Portal v1", "phase": "medium_term", "status": "backlog", "assignees": ["Kyle'\''s Claude"], "dependencies": [3]}'
+  -d '{"title": "Store Portal v1", "phase": "medium_term", "status": "backlog", "assignees": ["Kyle'\''s Claude"], "owner": "Kyle", "estimate": "3 sprints", "dependencies": [3]}'
 
 # Search issues
 curl "https://your-app.vercel.app/api/issues?search=console.log&priority=P1"
@@ -160,7 +170,7 @@ curl "https://your-app.vercel.app/api/issues?search=console.log&priority=P1"
 
 ## Team Members
 
-These are the valid values for `assignee`, `reporter`, and `actor` fields:
+These are the valid values for `assignee`, `reporter`, `actor`, and `owner` fields:
 
 - `Kyle`
 - `Nghiem`
@@ -193,5 +203,5 @@ npm run db:push    # Sync schema to database
 ```
 POSTGRES_URL=postgresql://...          # Supabase/Neon connection string
 NEXT_PUBLIC_SUPABASE_URL=https://...   # For file uploads (Supabase Storage)
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...   # For file uploads (Supabase Storage)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_...   # For file uploads (Supabase Storage)
 ```

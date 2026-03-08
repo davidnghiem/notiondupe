@@ -37,20 +37,22 @@ Custom project management tool for the MWAH CRM team. Fork of github.com/davidng
 ### Tab 2: Issue Tracker (new)
 Table/list view for bugs and issues:
 - **Fields:** title, description, priority (P0-P3), status, component, assignee, reporter, versionFound, versionFixed, stepsToReproduce, timestamps
-- **Statuses:** New → Triaged → In Progress → Fixed → Verified → Closed → Won't Fix
+- **Statuses:** Backlog → Triaged → In Progress → Fixed → Closed → Won't Fix
 - **Views:** Filterable table with column sorting, search bar (searches title + description)
 - **Interaction:** Click row to expand full issue detail (modal). Quick-action buttons for status change, assign, set priority.
 - **Filter bar:** Priority dropdown, status dropdown, component dropdown, assignee dropdown, search text
 
 ### Tab 3: Roadmap (new)
 Timeline view for planning features and projects:
-- **Fields:** title, description, phase, status, assignees (array), startDate, targetDate, dependencies (array of item IDs), sortOrder, timestamps
-- **Phases:** Immediate / Short-term / Medium-term / Long-term
+- **Fields:** title, description, phase, status, assignees (array), startDate, targetDate, dependencies (array of item IDs), sortOrder, owner, estimate, attachments, timestamps
+- **Phases:** Immediate / Short-term / Medium-term / Long-term — color-coded (red/orange/blue/gray)
 - **Statuses:** Backlog / Mockup Needed / Approved / In Progress / Done
+- **Owner:** Single person responsible for the item
+- **Estimate:** Freeform text (e.g. "2 weeks", "1 sprint")
 - **Assignees:** Multi-select from the team list (people + Claudes)
-- **Timeline view:** Horizontal bars showing duration per item, grouped/swimlaned by phase. Items without dates show as chips in their phase group.
-- **Dependencies:** Visual lines connecting items that block others. E.g., "CSV Reconciliation" → "Store Portal"
-- **Filter bar:** Phase, assignee, status
+- **Timeline view:** Cards grouped/swimlaned by phase with colored borders and headers. Items show owner avatars and estimate badges.
+- **Dependencies:** Shown as "Blocked by #X" text on cards
+- **Filter bar:** Notion-style multi-select for phase, status, owner
 
 ### Tab 4: Activity Feed (new)
 Append-only shared timeline:
@@ -103,13 +105,15 @@ id                serial PK
 title             varchar(255) NOT NULL
 description       text
 priority          varchar(2) NOT NULL DEFAULT 'P2'
-status            varchar(20) NOT NULL DEFAULT 'new'
+status            varchar(20) NOT NULL DEFAULT 'backlog'
 component         varchar(100)
 assignee          varchar(100)
 reporter          varchar(100)
 versionFound      varchar(20)
 versionFixed      varchar(20)
 stepsToReproduce  text
+attachments       text            -- JSON array: '[{"url":"...","name":"file.pdf","type":"application/pdf","size":1234}]'
+customFields      text            -- JSON object: '{"field_name":"value"}'
 createdAt         timestamp DEFAULT now()
 updatedAt         timestamp DEFAULT now()
 ```
@@ -125,7 +129,10 @@ assignees     text            -- JSON array: '["Kyle","Nghiem Claude"]'
 startDate     timestamp
 targetDate    timestamp
 dependencies  text            -- JSON array of roadmapItem IDs: '[3, 7]'
+owner         varchar(100)    -- single person responsible
+estimate      varchar(50)     -- freeform: "2 weeks", "1 sprint"
 sortOrder     integer DEFAULT 0
+attachments   text            -- JSON array: '[{"url":"...","name":"...","type":"...","size":1234}]'
 createdAt     timestamp DEFAULT now()
 updatedAt     timestamp DEFAULT now()
 ```
@@ -184,7 +191,7 @@ updatedAt     timestamp DEFAULT now()
 | Method | Path | Body/Params |
 |--------|------|------------|
 | GET | `/api/issues?priority=&status=&component=&assignee=&search=` | Filterable. `search` = ILIKE on title+description |
-| POST | `/api/issues` | `{title, description?, priority?, status?, component?, assignee?, reporter?, versionFound?, stepsToReproduce?}` |
+| POST | `/api/issues` | `{title, description?, priority?, status?, component?, assignee?, reporter?, versionFound?, stepsToReproduce?, attachments?, customFields?}` |
 | GET | `/api/issues/[id]` | — |
 | PATCH | `/api/issues/[id]` | Any subset. Auto-sets updatedAt |
 | DELETE | `/api/issues/[id]` | — |
@@ -193,7 +200,7 @@ updatedAt     timestamp DEFAULT now()
 | Method | Path | Body/Params |
 |--------|------|------------|
 | GET | `/api/roadmap?phase=&status=&assignee=` | Filterable |
-| POST | `/api/roadmap` | `{title, description?, phase?, status?, assignees?, startDate?, targetDate?, dependencies?, sortOrder?}` |
+| POST | `/api/roadmap` | `{title, description?, phase?, status?, assignees?, startDate?, targetDate?, dependencies?, sortOrder?, owner?, estimate?, attachments?}` |
 | GET | `/api/roadmap/[id]` | — |
 | PATCH | `/api/roadmap/[id]` | Any subset. Auto-sets updatedAt |
 | DELETE | `/api/roadmap/[id]` | — |
@@ -284,8 +291,8 @@ export const PRIORITIES = ['P0', 'P1', 'P2', 'P3'] as const;
 export const PRIORITY_LABELS = { P0: 'Critical', P1: 'High', P2: 'Medium', P3: 'Low' };
 export const PRIORITY_COLORS = { P0: '#EF4444', P1: '#F97316', P2: '#EAB308', P3: '#6B7280' };
 
-export const ISSUE_STATUSES = ['new', 'triaged', 'in_progress', 'fixed', 'verified', 'closed', 'wont_fix'] as const;
-export const ISSUE_STATUS_LABELS = { new: 'New', triaged: 'Triaged', in_progress: 'In Progress', fixed: 'Fixed', verified: 'Verified', closed: 'Closed', wont_fix: "Won't Fix" };
+export const ISSUE_STATUSES = ['backlog', 'triaged', 'in_progress', 'fixed', 'closed', 'wont_fix'] as const;
+export const ISSUE_STATUS_LABELS = { backlog: 'Backlog', triaged: 'Triaged', in_progress: 'In Progress', fixed: 'Fixed', closed: 'Closed', wont_fix: "Won't Fix" };
 
 export const COMPONENTS = ['Orders', 'Email', 'Calendar', 'Dashboard', 'Store Detail', 'Contact Detail', 'Admin', 'Map', 'Activity', 'Auth', 'Cloud Functions', 'Other'] as const;
 
@@ -334,7 +341,7 @@ POST /api/issues
 
 # Add a roadmap item
 POST /api/roadmap
-{"title": "Store Portal v1", "phase": "medium_term", "status": "backlog", "assignees": "[\"Kyle's Claude\"]", "dependencies": "[3]"}
+{"title": "Store Portal v1", "phase": "medium_term", "status": "backlog", "assignees": ["Kyle's Claude"], "owner": "Kyle", "estimate": "3 sprints", "dependencies": [3]}
 
 # Check decisions before modifying orders code
 GET /api/decisions?category=Orders
