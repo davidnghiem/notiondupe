@@ -66,6 +66,51 @@ curl "https://notiondupe.vercel.app/api/decisions?category=Orders"
 
 ---
 
+## Git Workflow (IMPORTANT — no more pushing straight to main)
+
+**Never push directly to `main`.** All changes go through branches and pull requests.
+
+### For every piece of work:
+
+```bash
+# 1. Make sure you're on latest main
+git checkout main
+git pull origin main
+
+# 2. Create a feature branch (use descriptive names)
+git checkout -b fix/empty-catch-blocks        # for bug fixes
+git checkout -b feat/order-detail-modal       # for features
+git checkout -b chore/console-log-cleanup     # for cleanup/infra
+
+# 3. Do your work, commit with clear messages
+git add <specific-files>
+git commit -m "Fix 12 empty catch blocks — add showToast() error feedback"
+
+# 4. Push your branch
+git push origin fix/empty-catch-blocks
+
+# 5. Create a pull request
+gh pr create --title "Fix 12 empty catch blocks" --body "Added showToast() to all 12 empty catch blocks so users see error feedback instead of silent failures. Closes issue #9."
+```
+
+### Branch naming conventions
+
+| Prefix | Use for | Example |
+|--------|---------|---------|
+| `fix/` | Bug fixes | `fix/empty-catch-blocks` |
+| `feat/` | New features | `feat/order-detail-modal` |
+| `chore/` | Cleanup, infra, docs | `chore/console-log-cleanup` |
+| `refactor/` | Code restructuring | `refactor/activity-modal` |
+
+### Rules
+- **One branch per task/issue** — don't bundle unrelated changes
+- **Keep PRs small** — easier to review, less risk
+- **Reference the issue number** in commit messages and PR descriptions (e.g. "Closes issue #9")
+- **Pull latest main** before creating a new branch
+- **Don't merge your own PR** if someone else is available to review — but if you're solo, self-merge is fine after giving it a once-over
+
+---
+
 ## Prioritization Guide
 
 - Work **high priority first**: P0 (Critical) → P1 (High) → P2 (Medium) → P3 (Low)
