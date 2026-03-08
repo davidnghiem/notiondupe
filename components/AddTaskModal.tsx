@@ -21,7 +21,7 @@ interface AddTaskModalProps {
   editTask?: Task | null;
 }
 
-const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded-lg bg-n-elevated text-n-text focus:ring-1 focus:ring-n-accent outline-none placeholder:text-n-text-dim";
+const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded bg-n-elevated text-n-text focus:ring-1 focus:ring-n-accent outline-none placeholder:text-n-text-dim text-sm";
 
 export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: AddTaskModalProps) {
   const [title, setTitle] = useState('');
@@ -88,41 +88,25 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: Ad
           {editTask ? 'Edit Task' : 'Add New Task'}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-n-text-secondary mb-1">Title *</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-              className={inputCls} placeholder="Task title" autoFocus />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-n-text-secondary mb-1">Description</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2}
-              className={`${inputCls} resize-none`} placeholder="Task description (optional)" />
-          </div>
-
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
+            className={inputCls} placeholder="Task title *" autoFocus />
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2}
+            className={`${inputCls} resize-none`} placeholder="Description" />
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-n-text-secondary mb-1">Priority</label>
-              <select value={priority} onChange={(e) => setPriority(e.target.value)} className={inputCls}>
-                <option value="">None</option>
-                {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-n-text-secondary mb-1">Assignee</label>
-              <select value={assignee} onChange={(e) => setAssignee(e.target.value)} className={inputCls}>
-                <option value="">Unassigned</option>
-                {TEAM_MEMBERS.map((m) => <option key={m} value={m}>{m}</option>)}
-              </select>
-            </div>
+            <select value={priority} onChange={(e) => setPriority(e.target.value)} className={inputCls}>
+              <option value="">Priority</option>
+              {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
+            </select>
+            <select value={assignee} onChange={(e) => setAssignee(e.target.value)} className={inputCls}>
+              <option value="">Assignee</option>
+              {TEAM_MEMBERS.map((m) => <option key={m} value={m}>{m}</option>)}
+            </select>
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-n-text-secondary mb-1">Due Date</label>
+            <label className="block text-xs text-n-text-dim mb-1">Due Date</label>
             <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputCls} />
           </div>
-
           <div>
             <label className="block text-sm font-medium text-n-text-secondary mb-1">Labels</label>
             <div className="flex flex-wrap gap-1.5">
@@ -138,12 +122,8 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: Ad
               ))}
             </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-n-text-secondary mb-1">Notes</label>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
-              className={`${inputCls} resize-none`} placeholder="Additional notes (optional)" />
-          </div>
+          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
+            className={`${inputCls} resize-none`} placeholder="Notes" />
 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}

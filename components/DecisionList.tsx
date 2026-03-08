@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Decision } from '@/lib/schema';
 import { StatusBadge } from './StatusBadge';
 import { DECISION_STATUSES, DECISION_STATUS_LABELS, DECISION_CATEGORIES } from '@/lib/constants';
+import { FilterBar } from './MultiSelectFilter';
 
 const selectCls = "px-2 py-1.5 text-sm border-none rounded bg-n-elevated text-n-text outline-none focus:ring-1 focus:ring-n-accent placeholder:text-n-text-dim";
 const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded bg-n-elevated text-n-text focus:ring-1 focus:ring-n-accent outline-none placeholder:text-n-text-dim text-sm";
@@ -11,21 +12,29 @@ const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded bg-n-el
 export function DecisionList() {
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ status: '', category: '', search: '' });
+  const [search, setSearch] = useState('');
+  const [multiFilters, setMultiFilters] = useState<Record<string, string[]>>({});
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
 
+  const handleFilterChange = (key: string, selected: string[]) => {
+    setMultiFilters((prev) => {
+      const next = { ...prev };
+      if (selected.length === 0) delete next[key];
+      else next[key] = selected;
+      return next;
+    });
+  };
+
   const fetchDecisions = useCallback(async () => {
     const params = new URLSearchParams();
-    if (filters.status) params.set('status', filters.status);
-    if (filters.category) params.set('category', filters.category);
-    if (filters.search) params.set('search', filters.search);
+    if (search) params.set('search', search);
 
     const res = await fetch(`/api/decisions?${params}`);
     const data = await res.json();
     setDecisions(data);
     setLoading(false);
-  }, [filters]);
+  }, [search]);
 
   useEffect(() => { fetchDecisions(); }, [fetchDecisions]);
 
@@ -45,34 +54,43 @@ export function DecisionList() {
     fetchDecisions();
   };
 
+  const filteredDecisions = decisions.filter((d) => {
+    if (multiFilters.status?.length && !multiFilters.status.includes(d.status)) return false;
+    if (multiFilters.category?.length && !multiFilters.category.includes(d.category || '')) return false;
+    return true;
+  });
+
+  const decisionFilters = [
+    { key: 'status', label: 'Status', options: DECISION_STATUSES.map((s) => ({ value: s, label: DECISION_STATUS_LABELS[s] })) },
+    { key: 'category', label: 'Category', options: DECISION_CATEGORIES.map((c) => ({ value: c, label: c })) },
+  ];
+
   return (
     <div>
       <div className="flex flex-wrap gap-2 mb-4 items-center">
         <input type="text" placeholder="Search decisions..."
-          title="Search by title or description (API: ?search=)"
-          value={filters.search} onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+          value={search} onChange={(e) => setSearch(e.target.value)}
           className={`${selectCls} flex-1 min-w-[200px]`} />
-        <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className={selectCls} title="Filter by status (API: ?status=settled)">
-          <option value="">All Statuses</option>
-          {DECISION_STATUSES.map((s) => <option key={s} value={s}>{DECISION_STATUS_LABELS[s]}</option>)}
-        </select>
-        <select value={filters.category} onChange={(e) => setFilters({ ...filters, category: e.target.value })} className={selectCls} title="Filter by category (API: ?category=Architecture)">
-          <option value="">All Categories</option>
-          {DECISION_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
-        <button onClick={() => setShowCreate(true)} title="Create new decision (API: POST /api/decisions)"
+        <button onClick={() => setShowCreate(true)}
           className="px-3 py-1.5 bg-n-accent text-white rounded text-sm font-medium hover:bg-n-accent-hover">
           New
         </button>
       </div>
+      <div className="mb-4">
+        <FilterBar
+          availableFilters={decisionFilters}
+          activeFilters={multiFilters}
+          onChange={handleFilterChange}
+        />
+      </div>
 
       {loading ? (
         <div className="text-center py-8 text-n-text-dim">Loading decisions...</div>
-      ) : decisions.length === 0 ? (
+      ) : filteredDecisions.length === 0 ? (
         <div className="text-center py-8 text-n-text-dim">No decisions found</div>
       ) : (
         <div className="space-y-2">
-          {decisions.map((decision) => (
+          {filteredDecisions.map((decision) => (
             <div key={decision.id}
               className="bg-n-surface border border-n-border rounded-lg p-3.5 cursor-pointer hover:bg-n-hover"
               onClick={() => setExpandedId(expandedId === decision.id ? null : decision.id)}>

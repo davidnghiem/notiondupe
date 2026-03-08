@@ -259,7 +259,7 @@ export function Board() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading board...</div>
+        <div className="text-n-text-dim">Loading board...</div>
       </div>
     );
   }
@@ -267,10 +267,10 @@ export function Board() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4">
-        <div className="text-red-500">Error: {error}</div>
+        <div className="text-n-danger">Error: {error}</div>
         <button
           onClick={seedDatabase}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="px-4 py-2 bg-n-accent text-white rounded-lg hover:bg-n-accent-hover"
         >
           Initialize Database
         </button>
@@ -281,10 +281,10 @@ export function Board() {
   if (!boardData || boardData.columns.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4">
-        <div className="text-gray-500">No columns found. Initialize the database?</div>
+        <div className="text-n-text-dim">No columns found. Initialize the database?</div>
         <button
           onClick={seedDatabase}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="px-4 py-2 bg-n-accent text-white rounded-lg hover:bg-n-accent-hover"
         >
           Create Default Columns
         </button>

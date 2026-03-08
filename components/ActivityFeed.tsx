@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { TEAM_MEMBERS } from '@/lib/constants';
+import { FilterBar } from './MultiSelectFilter';
 
 interface ActivityEntry {
   id: number;
@@ -12,7 +13,7 @@ interface ActivityEntry {
   createdAt: string;
 }
 
-const selectCls = "px-2 py-1.5 text-sm border-none rounded bg-n-elevated text-n-text outline-none focus:ring-1 focus:ring-n-accent";
+const selectCls = "px-2 py-1.5 text-sm border-none rounded bg-n-elevated text-n-text outline-none focus:ring-1 focus:ring-n-accent placeholder:text-n-text-dim";
 
 const ACTOR_COLORS: Record<string, string> = {
   "Kyle": '#d9730d',
@@ -39,12 +40,14 @@ function getActorColor(actor: string) {
 export function ActivityFeed() {
   const [entries, setEntries] = useState<ActivityEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [actorFilter, setActorFilter] = useState('');
+  const [multiFilters, setMultiFilters] = useState<Record<string, string[]>>({});
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [showPost, setShowPost] = useState(false);
   const [postActor, setPostActor] = useState('');
   const [postAction, setPostAction] = useState('');
+
+  const actorFilter = multiFilters.actor?.[0] || '';
 
   const fetchEntries = useCallback(async (reset = false) => {
     const currentOffset = reset ? 0 : offset;
@@ -84,13 +87,25 @@ export function ActivityFeed() {
     fetchEntries(true);
   };
 
+  const handleFilterChange = (key: string, selected: string[]) => {
+    setMultiFilters((prev) => {
+      const next = { ...prev };
+      if (selected.length === 0) delete next[key];
+      else next[key] = selected;
+      return next;
+    });
+  };
+
   return (
     <div>
       <div className="flex flex-wrap gap-2 mb-4 items-center">
-        <select value={actorFilter} onChange={(e) => setActorFilter(e.target.value)} className={selectCls} title="Filter by actor (API: ?actor=Kyle)">
-          <option value="">All Actors</option>
-          {TEAM_MEMBERS.map((m) => <option key={m} value={m}>{m}</option>)}
-        </select>
+        <FilterBar
+          availableFilters={[
+            { key: 'actor', label: 'Actor', options: TEAM_MEMBERS.map((m) => ({ value: m, label: m })) },
+          ]}
+          activeFilters={multiFilters}
+          onChange={handleFilterChange}
+        />
         <div className="flex-1" />
         <button onClick={() => setShowPost(!showPost)} title="Log new activity (API: POST /api/activities)"
           className="px-3 py-1.5 bg-n-accent text-white rounded text-sm font-medium hover:bg-n-accent-hover">
