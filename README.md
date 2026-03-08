@@ -11,7 +11,7 @@ Project management tool for the MWAH CRM team. Used by both humans and AI agents
 
 | Tab | Purpose |
 |-----|---------|
-| **Kanban** | Drag-and-drop task board with columns (Backlog, To Do, In Progress, In Review, Done, Blocked) |
+| **Kanban** | Drag-and-drop task board with columns (Backlog, To Do, In Progress, In Review, Done, Blocked). Filterable by assignee and priority. |
 | **Issues** | Bug/issue tracker with filterable table, sortable columns, inline editing, custom fields, file attachments |
 | **Roadmap** | High-level feature/project timeline grouped by phase (Immediate, Short-term, Medium-term, Long-term) |
 | **Activity** | Append-only activity feed — immutable audit log of what everyone did |
