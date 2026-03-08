@@ -19,10 +19,21 @@ const ACTOR_COLORS: Record<string, string> = {
   "Nghiem": '#337ea9',
   "Kyle's Claude": '#cb912f',
   "Nghiem's Claude": '#448361',
+  "Kyles Claude": '#cb912f',
+  "Nghiems Claude": '#448361',
+  "Team": '#9065b0',
 };
 
 function getActorColor(actor: string) {
-  return ACTOR_COLORS[actor] || '#787774';
+  if (ACTOR_COLORS[actor]) return ACTOR_COLORS[actor];
+  // Fuzzy match: normalize apostrophes and check if name contains a known key
+  const normalized = actor.replace(/['']/g, '');
+  for (const [key, color] of Object.entries(ACTOR_COLORS)) {
+    if (normalized === key.replace(/['']/g, '')) return color;
+  }
+  // Color by first character as fallback so each unique actor still gets a consistent color
+  const hue = Array.from(actor).reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
+  return `hsl(${hue}, 45%, 45%)`;
 }
 
 export function ActivityFeed() {
