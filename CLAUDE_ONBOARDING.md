@@ -109,9 +109,26 @@ git commit -m "Fix 12 empty catch blocks — add showToast() error feedback"
 # 4. Push your branch
 git push origin fix/empty-catch-blocks
 
-# 5. Create a pull request
+# 5. Create a pull request with reviewer + label
 gh pr create --title "Fix 12 empty catch blocks" --body "Added showToast() to all 12 empty catch blocks so users see error feedback instead of silent failures. Closes issue #9."
+
+# 6. Add the other side as reviewer + label the PR
+# Nghiem's side adds Kyle as reviewer:
+gh pr edit --add-reviewer setiohno --add-label bug
+# Kyle's side adds Nghiem as reviewer:
+gh pr edit --add-reviewer davidnghiem --add-label bug
 ```
+
+### PR labels
+
+Use these GitHub labels on every PR:
+
+| Label | Use for |
+|-------|---------|
+| `bug` | Bug fixes |
+| `feature` | New features |
+| `chore` | Cleanup, docs, maintenance |
+| `infrastructure` | CI, builds, monitoring, DevOps |
 
 ### Branch naming conventions
 
