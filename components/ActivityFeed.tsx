@@ -65,12 +65,12 @@ export function ActivityFeed() {
   return (
     <div>
       <div className="flex flex-wrap gap-2 mb-4 items-center">
-        <select value={actorFilter} onChange={(e) => setActorFilter(e.target.value)} className={selectCls}>
+        <select value={actorFilter} onChange={(e) => setActorFilter(e.target.value)} className={selectCls} title="Filter by actor (API: ?actor=Kyle)">
           <option value="">All Actors</option>
           {TEAM_MEMBERS.map((m) => <option key={m} value={m}>{m}</option>)}
         </select>
         <div className="flex-1" />
-        <button onClick={() => setShowPost(!showPost)}
+        <button onClick={() => setShowPost(!showPost)} title="Log new activity (API: POST /api/activities)"
           className="px-3 py-1.5 bg-n-accent text-white rounded text-sm font-medium hover:bg-n-accent-hover">
           New
         </button>

@@ -64,16 +64,16 @@ export function RoadmapTimeline() {
   return (
     <div>
       <div className="flex flex-wrap gap-2 mb-4 items-center">
-        <select value={filters.phase} onChange={(e) => setFilters({ ...filters, phase: e.target.value })} className={selectCls}>
+        <select value={filters.phase} onChange={(e) => setFilters({ ...filters, phase: e.target.value })} className={selectCls} title="Filter by phase (API: ?phase=immediate)">
           <option value="">All Phases</option>
           {ROADMAP_PHASES.map((p) => <option key={p} value={p}>{ROADMAP_PHASE_LABELS[p]}</option>)}
         </select>
-        <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className={selectCls}>
+        <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className={selectCls} title="Filter by status (API: ?status=in_progress)">
           <option value="">All Statuses</option>
           {ROADMAP_STATUSES.map((s) => <option key={s} value={s}>{ROADMAP_STATUS_LABELS[s]}</option>)}
         </select>
         <div className="flex-1" />
-        <button onClick={() => setShowCreate(true)}
+        <button onClick={() => setShowCreate(true)} title="Create new roadmap item (API: POST /api/roadmap)"
           className="px-3 py-1.5 bg-n-accent text-white rounded-lg text-sm hover:bg-n-accent-hover">
           New
         </button>

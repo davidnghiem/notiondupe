@@ -49,17 +49,18 @@ export function DecisionList() {
     <div>
       <div className="flex flex-wrap gap-2 mb-4 items-center">
         <input type="text" placeholder="Search decisions..."
+          title="Search by title or description (API: ?search=)"
           value={filters.search} onChange={(e) => setFilters({ ...filters, search: e.target.value })}
           className={`${selectCls} flex-1 min-w-[200px]`} />
-        <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className={selectCls}>
+        <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className={selectCls} title="Filter by status (API: ?status=settled)">
           <option value="">All Statuses</option>
           {DECISION_STATUSES.map((s) => <option key={s} value={s}>{DECISION_STATUS_LABELS[s]}</option>)}
         </select>
-        <select value={filters.category} onChange={(e) => setFilters({ ...filters, category: e.target.value })} className={selectCls}>
+        <select value={filters.category} onChange={(e) => setFilters({ ...filters, category: e.target.value })} className={selectCls} title="Filter by category (API: ?category=Architecture)">
           <option value="">All Categories</option>
           {DECISION_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
-        <button onClick={() => setShowCreate(true)}
+        <button onClick={() => setShowCreate(true)} title="Create new decision (API: POST /api/decisions)"
           className="px-3 py-1.5 bg-n-accent text-white rounded text-sm font-medium hover:bg-n-accent-hover">
           New
         </button>

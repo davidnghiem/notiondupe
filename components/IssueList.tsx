@@ -63,26 +63,27 @@ export function IssueList() {
       <div className="flex flex-wrap gap-2 mb-4 items-center">
         <input
           type="text" placeholder="Search issues..."
+          title="Search by title or description (API: ?search=)"
           value={filters.search} onChange={(e) => setFilters({ ...filters, search: e.target.value })}
           className={`${selectCls} flex-1 min-w-[200px]`}
         />
-        <select value={filters.priority} onChange={(e) => setFilters({ ...filters, priority: e.target.value })} className={selectCls}>
+        <select value={filters.priority} onChange={(e) => setFilters({ ...filters, priority: e.target.value })} className={selectCls} title="Filter by priority (API: ?priority=P0)">
           <option value="">All Priorities</option>
           {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
         </select>
-        <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className={selectCls}>
+        <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className={selectCls} title="Filter by status (API: ?status=in_progress)">
           <option value="">All Statuses</option>
           {ISSUE_STATUSES.map((s) => <option key={s} value={s}>{ISSUE_STATUS_LABELS[s]}</option>)}
         </select>
-        <select value={filters.component} onChange={(e) => setFilters({ ...filters, component: e.target.value })} className={selectCls}>
+        <select value={filters.component} onChange={(e) => setFilters({ ...filters, component: e.target.value })} className={selectCls} title="Filter by component (API: ?component=Orders)">
           <option value="">All Components</option>
           {COMPONENTS.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
-        <select value={filters.assignee} onChange={(e) => setFilters({ ...filters, assignee: e.target.value })} className={selectCls}>
+        <select value={filters.assignee} onChange={(e) => setFilters({ ...filters, assignee: e.target.value })} className={selectCls} title="Filter by assignee (API: ?assignee=Kyle)">
           <option value="">All Assignees</option>
           {TEAM_MEMBERS.map((m) => <option key={m} value={m}>{m}</option>)}
         </select>
-        <button onClick={() => setShowCreate(true)}
+        <button onClick={() => setShowCreate(true)} title="Create new issue (API: POST /api/issues)"
           className="px-3 py-1.5 bg-n-accent text-white rounded text-sm font-medium hover:bg-n-accent-hover">
           New
         </button>
@@ -95,12 +96,12 @@ export function IssueList() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-n-border-strong text-left">
-                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Priority</th>
+                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs" title="P0=Critical, P1=High, P2=Medium, P3=Low">Priority</th>
                 <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Title</th>
-                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Status</th>
-                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Component</th>
-                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs">Assignee</th>
-                <th className="py-1.5 text-n-text-secondary font-normal text-xs"></th>
+                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs" title="backlog, triaged, in_progress, fixed, closed, wont_fix">Status</th>
+                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs" title="Module/area of the codebase">Component</th>
+                <th className="py-1.5 pr-4 text-n-text-secondary font-normal text-xs" title="Team member or Claude agent">Assignee</th>
+                <th className="py-1.5 text-n-text-secondary font-normal text-xs" title="Quick status change"></th>
               </tr>
             </thead>
             <tbody>
