@@ -123,6 +123,7 @@ interface FilterBarProps {
 
 export function FilterBar({ availableFilters, activeFilters, onChange }: FilterBarProps) {
   const [showAdd, setShowAdd] = useState(false);
+  const [addedKeys, setAddedKeys] = useState<Set<string>>(new Set());
   const addRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -133,16 +134,20 @@ export function FilterBar({ availableFilters, activeFilters, onChange }: FilterB
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  const activeKeys = Object.keys(activeFilters).filter((k) => activeFilters[k].length > 0 || availableFilters.some((f) => f.key === k));
+  const activeKeys = [...new Set([
+    ...Object.keys(activeFilters).filter((k) => activeFilters[k]?.length > 0),
+    ...addedKeys,
+  ])];
   const visibleFilters = availableFilters.filter((f) => activeKeys.includes(f.key));
   const hiddenFilters = availableFilters.filter((f) => !activeKeys.includes(f.key));
 
   const addFilter = (key: string) => {
-    onChange(key, []);
+    setAddedKeys((prev) => new Set([...prev, key]));
     setShowAdd(false);
   };
 
   const removeFilter = (key: string) => {
+    setAddedKeys((prev) => { const next = new Set(prev); next.delete(key); return next; });
     onChange(key, []);
   };
 
@@ -189,7 +194,7 @@ export function FilterBar({ availableFilters, activeFilters, onChange }: FilterB
 
       {activeKeys.some((k) => (activeFilters[k]?.length || 0) > 0) && (
         <button
-          onClick={() => activeKeys.forEach((k) => onChange(k, []))}
+          onClick={() => { activeKeys.forEach((k) => onChange(k, [])); setAddedKeys(new Set()); }}
           className="px-2 py-1 text-xs text-n-text-dim hover:text-n-text-secondary"
         >
           Clear all
