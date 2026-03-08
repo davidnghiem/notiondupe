@@ -14,6 +14,17 @@ interface ActivityEntry {
 
 const selectCls = "px-2 py-1.5 text-sm border-none rounded bg-n-elevated text-n-text outline-none focus:ring-1 focus:ring-n-accent";
 
+const ACTOR_COLORS: Record<string, string> = {
+  "Kyle": '#d9730d',
+  "Nghiem": '#337ea9',
+  "Kyle's Claude": '#cb912f',
+  "Nghiem's Claude": '#448361',
+};
+
+function getActorColor(actor: string) {
+  return ACTOR_COLORS[actor] || '#787774';
+}
+
 export function ActivityFeed() {
   const [entries, setEntries] = useState<ActivityEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,24 +113,47 @@ export function ActivityFeed() {
         <div className="text-center py-8 text-n-text-dim">No activity yet</div>
       ) : (
         <div className="space-y-2">
-          {entries.map((entry) => (
-            <div key={entry.id} className="bg-n-surface border border-n-border rounded-lg p-3 hover:bg-n-hover">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <span className="font-medium text-n-text text-sm">{entry.actor}</span>
-                  <span className="text-n-text-secondary text-sm ml-2">{entry.action}</span>
+          {entries.map((entry) => {
+            const color = getActorColor(entry.actor);
+            const isBot = entry.actor.includes('Claude');
+            return (
+              <div key={entry.id} className="bg-n-surface border border-n-border rounded-lg p-3 hover:bg-n-hover">
+                <div className="flex items-start gap-2.5">
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                    style={{ backgroundColor: `${color}20` }}
+                  >
+                    {isBot ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color }}>
+                        <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7v1h1a2 2 0 110 4h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a2 2 0 110-4h1v-1a7 7 0 017-7h1V5.73A2 2 0 0112 2z" fill="currentColor" opacity="0.9"/>
+                        <circle cx="9" cy="14" r="1.5" fill="white"/>
+                        <circle cx="15" cy="14" r="1.5" fill="white"/>
+                      </svg>
+                    ) : (
+                      <span className="text-xs font-semibold" style={{ color }}>{entry.actor.charAt(0)}</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="font-medium text-sm" style={{ color }}>{entry.actor}</span>
+                      <span className="text-xs text-n-text-dim flex-shrink-0">
+                        {new Date(entry.createdAt).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-n-text mt-0.5 leading-relaxed">{entry.action}</p>
+                    {entry.context && (
+                      <span
+                        className="inline-flex items-center gap-1 mt-1.5 text-xs px-1.5 py-0.5 rounded-sm"
+                        style={{ backgroundColor: `${color}15`, color }}
+                      >
+                        {entry.context.type} #{entry.context.id}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <span className="text-xs text-n-text-dim flex-shrink-0">
-                  {new Date(entry.createdAt).toLocaleString()}
-                </span>
               </div>
-              {entry.context && (
-                <div className="mt-1 text-xs text-n-accent">
-                  {entry.context.type} #{entry.context.id}
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
 
           {hasMore && (
             <button onClick={() => fetchEntries(false)}
