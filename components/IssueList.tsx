@@ -24,7 +24,9 @@ export function IssueList() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [multiFilters, setMultiFilters] = useState<Record<string, string[]>>({});
+  const [multiFilters, setMultiFilters] = useState<Record<string, string[]>>({
+    status: ISSUE_STATUSES.filter((s) => s !== 'fixed' && s !== 'closed' && s !== 'wont_fix') as unknown as string[],
+  });
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>('priority');
