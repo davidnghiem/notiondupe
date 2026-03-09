@@ -7,6 +7,7 @@ import { StatusBadge } from './StatusBadge';
 import { IssueDetail } from './IssueDetail';
 import { PRIORITIES, PRIORITY_LABELS, PRIORITY_COLORS, ISSUE_STATUSES, ISSUE_STATUS_LABELS, COMPONENTS, TEAM_MEMBERS } from '@/lib/constants';
 import { FilterBar } from './MultiSelectFilter';
+import { FileUpload } from './FileUpload';
 
 type SortKey = 'priority' | 'title' | 'status' | 'component' | 'assignee' | 'created' | null;
 type SortDir = 'asc' | 'desc';
@@ -234,6 +235,7 @@ export function IssueList() {
 
 function CreateIssueModal({ onClose, onCreate }: { onClose: () => void; onCreate: (data: Record<string, unknown>) => void }) {
   const [form, setForm] = useState({ title: '', description: '', priority: 'P2', component: '', assignee: '', reporter: '', stepsToReproduce: '' });
+  const [attachments, setAttachments] = useState<{ url: string; name: string; type: string; size: number }[]>([]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -246,6 +248,7 @@ function CreateIssueModal({ onClose, onCreate }: { onClose: () => void; onCreate
       assignee: form.assignee || undefined,
       reporter: form.reporter || undefined,
       stepsToReproduce: form.stepsToReproduce.trim() || undefined,
+      attachments: attachments.length > 0 ? JSON.stringify(attachments) : undefined,
     });
   };
 
@@ -276,6 +279,10 @@ function CreateIssueModal({ onClose, onCreate }: { onClose: () => void; onCreate
             </select>
           </div>
           <textarea placeholder="Steps to reproduce" rows={2} value={form.stepsToReproduce} onChange={(e) => setForm({ ...form, stepsToReproduce: e.target.value })} className={`${inputCls} resize-none`} />
+          <div>
+            <label className="block text-sm font-medium text-n-text-secondary mb-1">Attachments</label>
+            <FileUpload attachments={attachments} onChange={setAttachments} />
+          </div>
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="flex-1 px-4 py-2 border border-n-border-strong text-n-text-secondary rounded-lg hover:bg-n-hover">Cancel</button>
             <button type="submit" disabled={!form.title.trim()} className="flex-1 px-4 py-2 bg-n-accent text-white rounded-lg hover:bg-n-accent-hover disabled:opacity-50 disabled:cursor-not-allowed">Create</button>
