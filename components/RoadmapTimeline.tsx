@@ -41,7 +41,9 @@ const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded-lg bg-n
 export function RoadmapTimeline() {
   const [items, setItems] = useState<RoadmapItemData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [multiFilters, setMultiFilters] = useState<Record<string, string[]>>({});
+  const [multiFilters, setMultiFilters] = useState<Record<string, string[]>>({
+    status: ROADMAP_STATUSES.filter((s) => s !== 'complete') as unknown as string[],
+  });
   const [showCreate, setShowCreate] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
 

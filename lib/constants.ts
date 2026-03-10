@@ -22,13 +22,13 @@ export const ROADMAP_PHASE_LABELS: Record<string, string> = {
   long_term: 'Long-term',
 };
 
-export const ROADMAP_STATUSES = ['backlog', 'mockup', 'approved', 'in_progress', 'done'] as const;
+export const ROADMAP_STATUSES = ['backlog', 'mockup', 'approved', 'in_progress', 'complete'] as const;
 export const ROADMAP_STATUS_LABELS: Record<string, string> = {
   backlog: 'Backlog',
   mockup: 'Mockup Needed',
   approved: 'Approved',
   in_progress: 'In Progress',
-  done: 'Done',
+  complete: 'Complete',
 };
 
 export const DECISION_STATUSES = ['settled', 'open', 'superseded'] as const;

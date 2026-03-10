@@ -12,7 +12,6 @@ const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string }> =
   // Roadmap statuses
   mockup:      { bg: 'rgba(203,145,47,0.15)',   text: 'rgba(203,145,47,1)',    dot: 'rgba(203,145,47,1)' },
   approved:    { bg: 'rgba(73,144,226,0.15)',   text: 'rgba(73,144,226,1)',    dot: 'rgba(73,144,226,1)' },
-  done:        { bg: 'rgba(77,171,154,0.15)',   text: 'rgba(77,171,154,1)',    dot: 'rgba(77,171,154,1)' },
   complete:    { bg: 'rgba(77,171,154,0.15)',   text: 'rgba(77,171,154,1)',    dot: 'rgba(77,171,154,1)' },
   // Decision statuses
   settled:     { bg: 'rgba(77,171,154,0.15)',   text: 'rgba(77,171,154,1)',    dot: 'rgba(77,171,154,1)' },
@@ -24,7 +23,7 @@ const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string }> =
 const STATUS_LABELS: Record<string, string> = {
   backlog: 'Backlog', triaged: 'Triaged', in_progress: 'In progress', fixed: 'Fixed',
   closed: 'Closed', wont_fix: "Won't fix",
-  mockup: 'Mockup needed', approved: 'Approved', done: 'Done', complete: 'Complete',
+  mockup: 'Mockup needed', approved: 'Approved', complete: 'Complete',
   settled: 'Settled', decided: 'Decided', open: 'Open', superseded: 'Superseded',
 };
 
