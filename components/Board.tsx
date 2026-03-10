@@ -120,6 +120,8 @@ export function Board() {
     }
   };
 
+  const [dragOriginalColumnId, setDragOriginalColumnId] = useState<number | null>(null);
+
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const taskId = active.id as number;
@@ -128,6 +130,7 @@ export function Board() {
       const task = column.tasks.find((t) => t.id === taskId);
       if (task) {
         setActiveTask(task);
+        setDragOriginalColumnId(column.id);
         break;
       }
     }
@@ -242,9 +245,8 @@ export function Board() {
       }
     }
 
-    // Update the task's column in database
-    const task = targetColumn.tasks.find((t) => t.id === activeId);
-    if (task && task.columnId !== targetColumn.id) {
+    // Update the task's column in database if it moved columns
+    if (dragOriginalColumnId !== null && dragOriginalColumnId !== targetColumn.id) {
       await fetch(`/api/tasks/${activeId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -254,6 +256,7 @@ export function Board() {
         }),
       });
     }
+    setDragOriginalColumnId(null);
   };
 
   if (loading) {
@@ -381,6 +384,7 @@ export function Board() {
         onSave={handleSaveTask}
         columnId={selectedColumnId}
         editTask={editTask}
+        columns={boardData?.columns.map((c) => ({ id: c.id, name: c.name })) || []}
       />
     </>
   );

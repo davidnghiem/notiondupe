@@ -4,6 +4,11 @@ import { useState, useEffect } from 'react';
 import { Task } from '@/lib/schema';
 import { PRIORITIES, COMPONENTS, TEAM_MEMBERS } from '@/lib/constants';
 
+interface ColumnOption {
+  id: number;
+  name: string;
+}
+
 interface AddTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -19,11 +24,12 @@ interface AddTaskModalProps {
   }) => void;
   columnId: number;
   editTask?: Task | null;
+  columns?: ColumnOption[];
 }
 
 const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded bg-n-elevated text-n-text focus:ring-1 focus:ring-n-accent outline-none placeholder:text-n-text-dim text-sm";
 
-export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: AddTaskModalProps) {
+export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask, columns = [] }: AddTaskModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [notes, setNotes] = useState('');
@@ -31,6 +37,7 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: Ad
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const [assignee, setAssignee] = useState<string>('');
   const [dueDate, setDueDate] = useState<string>('');
+  const [selectedColumnId, setSelectedColumnId] = useState<number>(columnId);
 
   useEffect(() => {
     if (editTask) {
@@ -44,6 +51,7 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: Ad
       setSelectedLabels(labels);
       setAssignee(editTask.assignee || '');
       setDueDate(editTask.dueDate ? new Date(editTask.dueDate).toISOString().split('T')[0] : '');
+      setSelectedColumnId(editTask.columnId || columnId);
     } else {
       setTitle('');
       setDescription('');
@@ -52,8 +60,9 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: Ad
       setSelectedLabels([]);
       setAssignee('');
       setDueDate('');
+      setSelectedColumnId(columnId);
     }
-  }, [editTask, isOpen]);
+  }, [editTask, isOpen, columnId]);
 
   const toggleLabel = (label: string) => {
     setSelectedLabels((prev) =>
@@ -69,7 +78,7 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: Ad
       title: title.trim(),
       description: description.trim(),
       notes: notes.trim(),
-      columnId: editTask?.columnId || columnId,
+      columnId: selectedColumnId,
       priority: priority || null,
       labels: selectedLabels,
       assignee: assignee || null,
@@ -103,6 +112,14 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask }: Ad
               {TEAM_MEMBERS.map((m) => <option key={m} value={m}>{m}</option>)}
             </select>
           </div>
+          {columns.length > 0 && (
+            <div>
+              <label className="block text-xs text-n-text-dim mb-1">Status</label>
+              <select value={selectedColumnId} onChange={(e) => setSelectedColumnId(parseInt(e.target.value))} className={inputCls}>
+                {columns.map((col) => <option key={col.id} value={col.id}>{col.name}</option>)}
+              </select>
+            </div>
+          )}
           <div>
             <label className="block text-xs text-n-text-dim mb-1">Due Date</label>
             <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputCls} />
