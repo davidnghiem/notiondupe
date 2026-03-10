@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Task } from '@/lib/schema';
-import { PRIORITIES, COMPONENTS, TEAM_MEMBERS } from '@/lib/constants';
+import { PRIORITIES, TASK_LABELS, TEAM_MEMBERS } from '@/lib/constants';
 
 interface ColumnOption {
   id: number;
@@ -127,7 +127,7 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask, colu
           <div>
             <label className="block text-sm font-medium text-n-text-secondary mb-1">Labels</label>
             <div className="flex flex-wrap gap-1.5">
-              {COMPONENTS.map((label) => (
+              {TASK_LABELS.map((label) => (
                 <button key={label} type="button" onClick={() => toggleLabel(label)}
                   className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
                     selectedLabels.includes(label)
