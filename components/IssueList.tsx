@@ -211,8 +211,10 @@ export function IssueList() {
                   </td>
                 </tr>
               ))}
-              {issues.length === 0 && (
-                <tr><td colSpan={7} className="py-8 text-center text-n-text-dim">No issues found</td></tr>
+              {sortedIssues.length === 0 && (
+                <tr><td colSpan={7} className="py-8 text-center text-n-text-dim">
+                  {issues.length === 0 ? 'No issues yet' : 'No issues match the current filters'}
+                </td></tr>
               )}
             </tbody>
           </table>
