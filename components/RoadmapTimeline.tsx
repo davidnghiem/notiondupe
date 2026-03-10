@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { StatusBadge } from './StatusBadge';
 import { RoadmapDetail } from './RoadmapDetail';
-import { ROADMAP_PHASES, ROADMAP_PHASE_LABELS, ROADMAP_STATUSES, ROADMAP_STATUS_LABELS, TEAM_MEMBERS } from '@/lib/constants';
+import { ROADMAP_PHASES, ROADMAP_PHASE_LABELS, ROADMAP_STATUSES, ROADMAP_STATUS_LABELS, TEAM_MEMBERS, getActorColor } from '@/lib/constants';
 import { FilterBar } from './MultiSelectFilter';
 
 interface RoadmapItemData {
@@ -28,12 +28,7 @@ const PHASE_COLORS: Record<string, { text: string; bg: string; border: string }>
   long_term:   { text: '#787774', bg: 'rgba(120,119,116,0.08)', border: 'rgba(120,119,116,0.25)' },
 };
 
-const OWNER_COLORS: Record<string, string> = {
-  "Kyle": '#d9730d',
-  "Nghiem": '#337ea9',
-  "Kyle's Claude": '#cb912f',
-  "Nghiem's Claude": '#448361',
-};
+// Actor colors imported from @/lib/constants
 
 const selectCls = "px-2 py-1.5 text-sm border-none rounded bg-n-elevated text-n-text outline-none focus:ring-1 focus:ring-n-accent";
 const inputCls = "w-full px-3 py-2 border border-n-border-strong rounded-lg bg-n-elevated text-n-text focus:ring-1 focus:ring-n-accent outline-none placeholder:text-n-text-dim";
@@ -140,7 +135,7 @@ export function RoadmapTimeline() {
                 ) : (
                   <div className="space-y-2">
                     {phaseItems.map((item) => {
-                      const ownerColor = OWNER_COLORS[item.owner || ''] || '#787774';
+                      const ownerColor = getActorColor(item.owner || '');
                       return (
                         <div key={item.id}
                           className="bg-n-surface border rounded-lg p-3 hover:bg-n-hover cursor-pointer transition-colors"

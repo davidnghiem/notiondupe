@@ -42,4 +42,34 @@ export const DECISION_CATEGORIES = ['Architecture', 'Design', 'Security', 'Order
 
 export const TASK_LABELS = ['bug', 'feature', 'chore', 'infrastructure', 'docs', 'review', 'blocked', 'awaiting-merge', 'merged'] as const;
 
+export const LABEL_COLORS: Record<string, { bg: string; text: string }> = {
+  bug:              { bg: 'rgba(235,87,87,0.12)',   text: '#eb5757' },
+  feature:          { bg: 'rgba(73,144,226,0.12)',  text: '#4990e2' },
+  chore:            { bg: 'rgba(120,119,116,0.12)', text: '#787774' },
+  infrastructure:   { bg: 'rgba(167,130,195,0.12)', text: '#a782c3' },
+  docs:             { bg: 'rgba(69,159,137,0.12)',  text: '#459f89' },
+  review:           { bg: 'rgba(203,145,47,0.12)',  text: '#cb912f' },
+  blocked:          { bg: 'rgba(235,87,87,0.15)',   text: '#eb5757' },
+  'awaiting-merge': { bg: 'rgba(203,145,47,0.15)',  text: '#cb912f' },
+  merged:           { bg: 'rgba(77,171,154,0.12)',  text: '#4dab9a' },
+};
+
+export const ACTOR_COLORS: Record<string, string> = {
+  "Kyle": '#d9730d',
+  "Nghiem": '#337ea9',
+  "Kyle's Claude": '#cb912f',
+  "Nghiem's Claude": '#448361',
+  "Team": '#9065b0',
+};
+
+export function getActorColor(actor: string): string {
+  if (ACTOR_COLORS[actor]) return ACTOR_COLORS[actor];
+  const normalized = actor.replace(/['']/g, '');
+  for (const [key, color] of Object.entries(ACTOR_COLORS)) {
+    if (normalized === key.replace(/['']/g, '')) return color;
+  }
+  const hue = Array.from(actor).reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
+  return `hsl(${hue}, 45%, 45%)`;
+}
+
 export const TEAM_MEMBERS = ["Kyle", "Nghiem", "Kyle's Claude", "Nghiem's Claude", "Team"] as const;

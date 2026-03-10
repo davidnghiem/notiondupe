@@ -6,6 +6,7 @@ import { Task } from '@/lib/schema';
 import { PriorityBadge } from './PriorityBadge';
 import { LabelPill } from './LabelPill';
 import { StatusBadge } from './StatusBadge';
+import { getActorColor } from '@/lib/constants';
 
 interface TaskCardProps {
   task: Task;
@@ -79,10 +80,11 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
 
       {task.assignee && (
         <div className="flex items-center gap-1.5 mt-2">
-          <div className="w-5 h-5 rounded-full bg-n-elevated flex items-center justify-center flex-shrink-0">
-            <span className="text-[10px] font-medium text-n-text-secondary">{task.assignee.charAt(0)}</span>
+          <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: `${getActorColor(task.assignee)}20` }}>
+            <span className="text-[10px] font-semibold" style={{ color: getActorColor(task.assignee) }}>{task.assignee.charAt(0)}</span>
           </div>
-          <span className="text-xs text-n-text-secondary">{task.assignee}</span>
+          <span className="text-xs font-medium" style={{ color: getActorColor(task.assignee) }}>{task.assignee}</span>
         </div>
       )}
 
