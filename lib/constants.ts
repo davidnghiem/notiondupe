@@ -42,17 +42,6 @@ export const DECISION_CATEGORIES = ['Architecture', 'Design', 'Security', 'Order
 
 export const TASK_LABELS = ['bug', 'feature', 'chore', 'infrastructure', 'docs', 'review', 'blocked', 'awaiting-merge', 'merged'] as const;
 
-export const LABEL_COLORS: Record<string, { bg: string; text: string }> = {
-  bug:              { bg: 'rgba(235,87,87,0.12)',   text: '#eb5757' },
-  feature:          { bg: 'rgba(73,144,226,0.12)',  text: '#4990e2' },
-  chore:            { bg: 'rgba(120,119,116,0.12)', text: '#787774' },
-  infrastructure:   { bg: 'rgba(167,130,195,0.12)', text: '#a782c3' },
-  docs:             { bg: 'rgba(69,159,137,0.12)',  text: '#459f89' },
-  review:           { bg: 'rgba(203,145,47,0.12)',  text: '#cb912f' },
-  blocked:          { bg: 'rgba(235,87,87,0.15)',   text: '#eb5757' },
-  'awaiting-merge': { bg: 'rgba(203,145,47,0.15)',  text: '#cb912f' },
-  merged:           { bg: 'rgba(77,171,154,0.12)',  text: '#4dab9a' },
-};
 
 export const ACTOR_COLORS: Record<string, string> = {
   "Kyle": '#d9730d',
