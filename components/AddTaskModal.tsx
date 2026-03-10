@@ -98,34 +98,48 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask, colu
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-3">
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-            className={inputCls} placeholder="Task title *" autoFocus />
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2}
-            className={`${inputCls} resize-none`} placeholder="Description" />
-          <div className="grid grid-cols-2 gap-3">
-            <select value={priority} onChange={(e) => setPriority(e.target.value)} className={inputCls}>
-              <option value="">Priority</option>
-              {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
-            </select>
-            <select value={assignee} onChange={(e) => setAssignee(e.target.value)} className={inputCls}>
-              <option value="">Assignee</option>
-              {TEAM_MEMBERS.map((m) => <option key={m} value={m}>{m}</option>)}
-            </select>
+          <div>
+            <label className="block text-xs text-n-text-dim mb-1">Title</label>
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
+              className={inputCls} placeholder="Task title *" autoFocus />
           </div>
-          {columns.length > 0 && (
+          <div>
+            <label className="block text-xs text-n-text-dim mb-1">Description</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2}
+              className={`${inputCls} resize-none`} placeholder="Description" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-n-text-dim mb-1">Status</label>
-              <select value={selectedColumnId} onChange={(e) => setSelectedColumnId(parseInt(e.target.value))} className={inputCls}>
-                {columns.map((col) => <option key={col.id} value={col.id}>{col.name}</option>)}
+              <label className="block text-xs text-n-text-dim mb-1">Priority</label>
+              <select value={priority} onChange={(e) => setPriority(e.target.value)} className={inputCls}>
+                <option value="">None</option>
+                {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
-          )}
-          <div>
-            <label className="block text-xs text-n-text-dim mb-1">Due Date</label>
-            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputCls} />
+            <div>
+              <label className="block text-xs text-n-text-dim mb-1">Assignee</label>
+              <select value={assignee} onChange={(e) => setAssignee(e.target.value)} className={inputCls}>
+                <option value="">None</option>
+                {TEAM_MEMBERS.map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {columns.length > 0 && (
+              <div>
+                <label className="block text-xs text-n-text-dim mb-1">Status</label>
+                <select value={selectedColumnId} onChange={(e) => setSelectedColumnId(parseInt(e.target.value))} className={inputCls}>
+                  {columns.map((col) => <option key={col.id} value={col.id}>{col.name}</option>)}
+                </select>
+              </div>
+            )}
+            <div>
+              <label className="block text-xs text-n-text-dim mb-1">Due Date</label>
+              <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputCls} />
+            </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-n-text-secondary mb-1">Labels</label>
+            <label className="block text-xs text-n-text-dim mb-1">Labels</label>
             <div className="flex flex-wrap gap-1.5">
               {TASK_LABELS.map((label) => (
                 <button key={label} type="button" onClick={() => toggleLabel(label)}
@@ -139,8 +153,11 @@ export function AddTaskModal({ isOpen, onClose, onSave, columnId, editTask, colu
               ))}
             </div>
           </div>
-          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
-            className={`${inputCls} resize-none`} placeholder="Notes" />
+          <div>
+            <label className="block text-xs text-n-text-dim mb-1">Notes</label>
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
+              className={`${inputCls} resize-none`} placeholder="Notes" />
+          </div>
 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}
