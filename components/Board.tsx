@@ -310,16 +310,24 @@ export function Board() {
 
   const hasFilters = Object.values(filters).some((v) => v.length > 0);
 
-  const filteredBoardData = hasFilters && boardData
+  const priorityOrder: Record<string, number> = { P0: 0, P1: 1, P2: 2, P3: 3 };
+  const sortByPriority = (tasks: Task[]) =>
+    [...tasks].sort((a, b) => (priorityOrder[a.priority || 'P3'] ?? 4) - (priorityOrder[b.priority || 'P3'] ?? 4));
+
+  const filteredBoardData = boardData
     ? {
         ...boardData,
         columns: boardData.columns.map((col) => ({
           ...col,
-          tasks: col.tasks.filter((task) => {
-            if (filters.assignee?.length && !filters.assignee.includes(task.assignee || '')) return false;
-            if (filters.priority?.length && !filters.priority.includes(task.priority || '')) return false;
-            return true;
-          }),
+          tasks: sortByPriority(
+            hasFilters
+              ? col.tasks.filter((task) => {
+                  if (filters.assignee?.length && !filters.assignee.includes(task.assignee || '')) return false;
+                  if (filters.priority?.length && !filters.priority.includes(task.priority || '')) return false;
+                  return true;
+                })
+              : col.tasks
+          ),
         })),
       }
     : boardData;
@@ -354,7 +362,7 @@ export function Board() {
         onDragEnd={handleDragEnd}
       >
         <div className="flex gap-6 overflow-x-auto pb-4">
-          {(filteredBoardData || boardData)!.columns.map((column) => (
+          {filteredBoardData!.columns.map((column) => (
             <Column
               key={column.id}
               column={column}

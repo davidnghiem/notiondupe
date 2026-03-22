@@ -48,6 +48,7 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
     >
       <div className="flex justify-between items-start gap-2">
         <h3 className="font-medium text-n-text text-sm leading-snug flex-1 min-w-0">
+          <span className="text-n-text-dim font-normal">#{task.id}</span>{' '}
           {task.title}
         </h3>
         <div className="flex gap-0.5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
