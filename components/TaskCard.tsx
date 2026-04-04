@@ -39,13 +39,12 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{ ...style, boxShadow: isDragging ? 'var(--n-deep-shadow)' : 'var(--n-card-shadow)' }}
       {...attributes}
       {...listeners}
       className={`bg-n-surface p-3 rounded-xl border border-n-border cursor-grab active:cursor-grabbing hover:bg-n-hover group ${
         isDragging ? 'opacity-50' : ''
       }`}
-      style={{ boxShadow: isDragging ? 'var(--n-deep-shadow)' : 'var(--n-card-shadow)' }}
     >
       <div className="flex justify-between items-start gap-2">
         <h3 className="font-medium text-n-text text-sm leading-snug flex-1 min-w-0">
