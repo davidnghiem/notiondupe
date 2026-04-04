@@ -92,7 +92,7 @@ export function DecisionList() {
         <div className="space-y-2">
           {filteredDecisions.map((decision) => (
             <div key={decision.id}
-              className="bg-n-surface border border-n-border rounded-lg p-3.5 cursor-pointer hover:bg-n-hover"
+              className="bg-n-surface border border-n-border rounded-xl p-3.5 cursor-pointer hover:bg-n-hover"
               onClick={() => setExpandedId(expandedId === decision.id ? null : decision.id)}>
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">

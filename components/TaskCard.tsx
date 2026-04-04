@@ -42,9 +42,10 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
       style={style}
       {...attributes}
       {...listeners}
-      className={`bg-n-surface p-3 rounded-lg border border-n-border shadow-[0_1px_2px_rgba(0,0,0,0.04)] cursor-grab active:cursor-grabbing hover:bg-n-hover group ${
-        isDragging ? 'opacity-50 shadow-lg' : ''
+      className={`bg-n-surface p-3 rounded-xl border border-n-border cursor-grab active:cursor-grabbing hover:bg-n-hover group ${
+        isDragging ? 'opacity-50' : ''
       }`}
+      style={{ boxShadow: isDragging ? 'var(--n-deep-shadow)' : 'var(--n-card-shadow)' }}
     >
       <div className="flex justify-between items-start gap-2">
         <h3 className="font-medium text-n-text text-sm leading-snug flex-1 min-w-0">
@@ -95,7 +96,7 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
           <LabelPill key={label} label={label} />
         ))}
         {task.dueDate && (
-          <span className={`text-[11px] px-1.5 py-0.5 rounded-sm ${
+          <span className={`text-[11px] px-1.5 py-0.5 rounded-full ${
             isOverdue
               ? 'bg-[rgba(235,87,87,0.15)] text-[rgba(235,87,87,1)]'
               : 'bg-n-elevated text-n-text-dim'

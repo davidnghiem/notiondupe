@@ -94,7 +94,7 @@ export function ActivityFeed() {
       </div>
 
       {showPost && (
-        <div className="bg-n-surface border border-n-border rounded-lg p-4 mb-4">
+        <div className="bg-n-surface border border-n-border rounded-xl p-4 mb-4">
           <div className="flex gap-2 mb-2">
             <select value={postActor} onChange={(e) => setPostActor(e.target.value)}
               className={`${selectCls} flex-shrink-0`}>
@@ -123,7 +123,7 @@ export function ActivityFeed() {
             const color = getActorColor(entry.actor);
             const isBot = entry.actor.includes('Claude');
             return (
-              <div key={entry.id} className="bg-n-surface border border-n-border rounded-lg p-3 hover:bg-n-hover">
+              <div key={entry.id} className="bg-n-surface border border-n-border rounded-xl p-3 hover:bg-n-hover">
                 <div className="flex items-start gap-2.5">
                   <div
                     className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -149,7 +149,7 @@ export function ActivityFeed() {
                     <p className="text-sm text-n-text mt-0.5 leading-relaxed">{entry.action}</p>
                     {entry.context && (
                       <span
-                        className="inline-flex items-center gap-1 mt-1.5 text-xs px-1.5 py-0.5 rounded-sm"
+                        className="inline-flex items-center gap-1 mt-1.5 text-xs px-1.5 py-0.5 rounded-full"
                         style={{ backgroundColor: `${color}15`, color }}
                       >
                         {entry.context.type} #{entry.context.id}

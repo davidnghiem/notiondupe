@@ -152,7 +152,7 @@ function OverviewSection() {
           { code: 'P3', label: 'Low', color: 'rgba(120,119,116,0.15)', text: 'rgba(120,119,116,1)', desc: 'Nice to have, backlog' },
         ].map((p) => (
           <div key={p.code} className="flex items-center gap-2">
-            <span className="text-[11px] font-medium px-2 py-0.5 rounded-sm" style={{ backgroundColor: p.color, color: p.text }}>{p.label}</span>
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: p.color, color: p.text }}>{p.label}</span>
             <span className="text-xs text-n-text-dim">{p.code}</span>
             <span className="text-xs text-n-text-secondary">{p.desc}</span>
           </div>

@@ -138,7 +138,7 @@ export function RoadmapTimeline() {
                       const ownerColor = getActorColor(item.owner || '');
                       return (
                         <div key={item.id}
-                          className="bg-n-surface border rounded-lg p-3 hover:bg-n-hover cursor-pointer transition-colors"
+                          className="bg-n-surface border rounded-xl p-3 hover:bg-n-hover cursor-pointer transition-colors shadow-[var(--n-card-shadow)]"
                           style={{ borderColor: colors.border, borderLeftWidth: 3 }}
                           onClick={() => setSelectedId(item.id)}>
                           <div className="flex items-start justify-between gap-3">
@@ -147,7 +147,7 @@ export function RoadmapTimeline() {
                                 <h4 className="font-medium text-n-text text-sm">{item.title}</h4>
                                 <StatusBadge status={item.status} />
                                 {item.estimate && (
-                                  <span className="text-[11px] px-1.5 py-0.5 rounded-sm bg-[rgba(167,130,195,0.15)] text-[rgba(167,130,195,1)]">
+                                  <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-[rgba(167,130,195,0.15)] text-[rgba(167,130,195,1)]">
                                     {item.estimate}
                                   </span>
                                 )}

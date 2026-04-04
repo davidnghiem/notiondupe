@@ -17,7 +17,7 @@ export function PriorityBadge({ priority }: { priority: string | null }) {
 
   return (
     <span
-      className="inline-flex items-center px-2 py-0.5 rounded-sm text-[11px] font-medium whitespace-nowrap"
+      className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold whitespace-nowrap tracking-wide"
       style={{ backgroundColor: style.bg, color: style.text }}
     >
       {label}

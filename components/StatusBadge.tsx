@@ -42,7 +42,7 @@ export function StatusBadge({ status, variant }: { status: string; variant?: 'pi
 
   return (
     <span
-      className="inline-flex items-center px-2 py-0.5 rounded-sm text-[11px] font-medium whitespace-nowrap"
+      className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold whitespace-nowrap tracking-wide"
       style={{ backgroundColor: config.bg, color: config.text }}
     >
       {label}

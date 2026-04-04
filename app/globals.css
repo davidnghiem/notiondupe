@@ -3,19 +3,21 @@
 :root {
   --n-bg: #ffffff;
   --n-surface: #ffffff;
-  --n-elevated: #f7f6f3;
+  --n-elevated: #f6f5f4;
   --n-hover: #efefed;
   --n-active: #e3e2e0;
-  --n-text: #37352f;
-  --n-text-secondary: #787774;
-  --n-text-dim: #b4b4b0;
-  --n-border: rgba(55, 53, 47, 0.09);
-  --n-border-strong: rgba(55, 53, 47, 0.16);
-  --n-accent: #2383e2;
-  --n-accent-hover: #1b6ec2;
+  --n-text: rgba(0, 0, 0, 0.95);
+  --n-text-secondary: #615d59;
+  --n-text-dim: #a39e98;
+  --n-border: rgba(0, 0, 0, 0.1);
+  --n-border-strong: rgba(0, 0, 0, 0.16);
+  --n-accent: #0075de;
+  --n-accent-hover: #005bab;
   --n-danger: #eb5757;
-  --n-success: #4dab9a;
-  --n-warning: #cb912f;
+  --n-success: #2a9d99;
+  --n-warning: #dd5b00;
+  --n-card-shadow: 0px 4px 18px rgba(0,0,0,0.04), 0px 2.025px 7.85px rgba(0,0,0,0.027), 0px 0.8px 2.93px rgba(0,0,0,0.02), 0px 0.175px 1.04px rgba(0,0,0,0.01);
+  --n-deep-shadow: 0px 1px 3px rgba(0,0,0,0.01), 0px 3px 7px rgba(0,0,0,0.02), 0px 7px 15px rgba(0,0,0,0.02), 0px 14px 28px rgba(0,0,0,0.04), 0px 23px 52px rgba(0,0,0,0.05);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,11 +32,13 @@
     --n-text-dim: rgba(255, 255, 255, 0.33);
     --n-border: rgba(255, 255, 255, 0.055);
     --n-border-strong: rgba(255, 255, 255, 0.094);
-    --n-accent: #2383e2;
-    --n-accent-hover: #1b6ec2;
+    --n-accent: #0075de;
+    --n-accent-hover: #005bab;
     --n-danger: #eb5757;
-    --n-success: #4dab9a;
-    --n-warning: #cb912f;
+    --n-success: #2a9d99;
+    --n-warning: #dd5b00;
+    --n-card-shadow: 0px 4px 18px rgba(0,0,0,0.08), 0px 2px 8px rgba(0,0,0,0.06), 0px 1px 3px rgba(0,0,0,0.04);
+    --n-deep-shadow: 0px 1px 3px rgba(0,0,0,0.04), 0px 3px 7px rgba(0,0,0,0.06), 0px 7px 15px rgba(0,0,0,0.06), 0px 14px 28px rgba(0,0,0,0.08), 0px 23px 52px rgba(0,0,0,0.10);
   }
 }
 
@@ -54,14 +58,14 @@
   --color-n-danger: var(--n-danger);
   --color-n-success: var(--n-success);
   --color-n-warning: var(--n-warning);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: 'Inter', -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--n-bg);
   color: var(--n-text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif;
+  font-family: 'Inter', -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -98,5 +102,5 @@ button, a, input, select, textarea {
 }
 
 ::selection {
-  background: rgba(35, 131, 226, 0.28);
+  background: rgba(0, 117, 222, 0.28);
 }
